@@ -8,11 +8,9 @@ let package = Package(
         .library(name: "SwiftGLFW", targets: ["SwiftGLFW"])
     ],
     dependencies: [
-        .package(name: "CGLFW3", path: "CGLFW3")
+        .package(url: "https://github.com/thepotatoking55/CGLFW3.git", .upToNextMajor(from: "3.3.4"))
     ],
     targets: [
-        .target(name: "SwiftGLFW", dependencies: [
-            .product(name: "CGLFW3", package: "CGLFW3")
-        ])
+        .target(name: "SwiftGLFW", dependencies: ["CGLFW3"])
     ]
 )
