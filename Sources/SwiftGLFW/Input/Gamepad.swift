@@ -45,8 +45,7 @@ public struct GLGamepad: Hashable, Codable, Equatable {
             }
         }
         
-        fileprivate var buttons: [State]
-        fileprivate var axes: [Float]
+        fileprivate var buttons: [State], axes: [Float]
         fileprivate init(state: GLFWgamepadstate) {
             let reflection = Mirror(reflecting: state.buttons)
             let buttons = (reflection.children.map(\.value) as! [UInt8]).map(\.int)
@@ -56,36 +55,36 @@ public struct GLGamepad: Hashable, Codable, Equatable {
             self.axes = (axisReflection.children.map(\.value) as! [Float])
         }
         
-        public var a: State { buttons[GLFW_GAMEPAD_BUTTON_A.int] }
-        public var b: State { buttons[GLFW_GAMEPAD_BUTTON_B.int] }
-        public var x: State { buttons[GLFW_GAMEPAD_BUTTON_X.int] }
-        public var y: State { buttons[GLFW_GAMEPAD_BUTTON_Y.int] }
+        public var a: State { buttons[GLFW_GAMEPAD_BUTTON_A.int] },
+                   b: State { buttons[GLFW_GAMEPAD_BUTTON_B.int] },
+                   x: State { buttons[GLFW_GAMEPAD_BUTTON_X.int] },
+                   y: State { buttons[GLFW_GAMEPAD_BUTTON_Y.int] }
         
         public var bumper: (left: State, right: State) {
             (buttons[GLFW_GAMEPAD_BUTTON_LEFT_BUMPER.int], buttons[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER.int])
         }
         
-        public var back: State { buttons[GLFW_GAMEPAD_BUTTON_BACK.int] }
-        public var start: State { buttons[GLFW_GAMEPAD_BUTTON_START.int] }
-        public var guide: State { buttons[GLFW_GAMEPAD_BUTTON_GUIDE.int] }
+        public var back: State { buttons[GLFW_GAMEPAD_BUTTON_BACK.int] },
+                   start: State { buttons[GLFW_GAMEPAD_BUTTON_START.int] },
+                   guide: State { buttons[GLFW_GAMEPAD_BUTTON_GUIDE.int] }
         
         public var dpad: (up: State, right: State, down: State, left: State) {
             (buttons[GLFW_GAMEPAD_BUTTON_DPAD_UP.int], buttons[GLFW_GAMEPAD_BUTTON_DPAD_RIGHT.int], buttons[GLFW_GAMEPAD_BUTTON_DPAD_DOWN.int], buttons[GLFW_GAMEPAD_BUTTON_DPAD_LEFT.int])
         }
         
-        public var cross: State { a }
-        public var circle: State { b }
-        public var square: State { x }
-        public var triangle: State { y }
+        public var cross: State { a },
+                   circle: State { b },
+                   square: State { x },
+                   triangle: State { y }
         
-        public var switchA: State { b }
-        public var switchB: State { a }
-        public var switchX: State { y }
-        public var switchY: State { x }
+        public var switchA: State { b },
+                   switchB: State { a },
+                   switchX: State { y },
+                   switchY: State { x }
         
-        public var minus: State { back }
-        public var plus: State { start }
-        public var home: State { guide }
+        public var minus: State { back },
+                   plus: State { start },
+                   home: State { guide }
         
         public struct Thumbstick: Equatable {
             public var x, y: Float
