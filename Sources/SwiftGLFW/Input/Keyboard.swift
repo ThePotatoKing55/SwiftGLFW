@@ -52,7 +52,7 @@ public final class GLKeyboard {
         case numpad0, numpad1, numpad2, numpad3, numpad4, numpad5, numpad6, numpad7, numpad8, numpad9
         case numpadDecimal, numpadDivide, numpadMultiply, numpadSubtract, numpadAdd, numpadEnter, numpadEqual
         
-        case leftShift, leftControl, leftAlt, leftSuper
+        case leftShift = 340, leftControl, leftAlt, leftSuper
         case rightShift, rightControl, rightAlt, rightSuper
         public static let (leftCommand, rightCommand) = (leftSuper, rightSuper)
         public static let (leftWin, rightWin) = (leftSuper, rightSuper)
