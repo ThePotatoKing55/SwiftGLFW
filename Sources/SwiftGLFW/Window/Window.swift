@@ -64,13 +64,21 @@ public final class GLWindow: GLObject {
         glfwRestoreWindow(pointer)
     }
     
-    public func makeFullscreen<T: BinaryInteger>(on monitor: GLMonitor, size: GLSize<T>, refreshRate: Int?) {
+    public func makeFullscreen<T: BinaryInteger>(monitor: GLMonitor, size: GLSize<T>, refreshRate: Int? = nil) {
         glfwSetWindowMonitor(pointer, monitor.pointer, .zero, .zero, size.width.int32, size.height.int32, refreshRate?.int32 ?? Constant.dontCare)
     }
     
-    public func exitFullscreen<T: BinaryInteger>(to newFrame: GLFrame<T>) {
+    public func makeFullscreen(monitor: GLMonitor = .primary) {
+        makeFullscreen(monitor: monitor, size: monitor.workArea.size)
+    }
+    
+    public func exitFullscreen<T: BinaryInteger>(withFrame newFrame: GLFrame<T>) {
         glfwSetWindowPos(pointer, newFrame.x.int32, newFrame.x.int32)
         glfwSetWindowSize(pointer, newFrame.width.int32, newFrame.height.int32)
+    }
+    
+    public var shouldClose: Bool {
+        glfwWindowShouldClose(pointer).bool
     }
     
     public func close() {
