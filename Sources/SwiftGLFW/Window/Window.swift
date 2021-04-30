@@ -1,7 +1,7 @@
 import Foundation
 import glfw3
 
-public class GLWindow: GLFWObject {
+public final class GLWindow: GLObject {
     internal(set) public var pointer: OpaquePointer?
     
     public static var hints: GLWindowHints = .default {
@@ -24,8 +24,15 @@ public class GLWindow: GLFWObject {
     public var restoreHandler: (() -> Void)?
     public var framebufferSizeChangeHandler: ((GLSize<Int>) -> Void)?
     public var contentScaleChangeHandler: ((GLContentScale) -> Void)?
-    public var keyInputHandler: ((GLKey, Int, GLKey.State, GLKey.Modifier) -> Void)?
+    public var keyInputHandler: ((GLKeyboard.Key, Int, GLKeyboard.Key.State, GLKeyboard.Modifier) -> Void)?
     public var textInputHandler: ((String) -> Void)?
+    
+    public var cursorEnterHandler: (() -> Void)?
+    public var cursorExitHandler: (() -> Void)?
+    public var mouseButtonHandler: ((GLMouse.Button, GLMouse.Button.State, GLKeyboard.Modifier) -> Void)?
+    public var scrollInputHandler: ((GLPoint<Double>) -> Void)?
+    
+    public var dragAndDropHandler: (([String]) -> Void)?
     
     public enum WindowMode {
         case minimized, maximized, fullscreen(GLMonitor), windowed
@@ -33,8 +40,9 @@ public class GLWindow: GLFWObject {
     
     public var windowMode: WindowMode {
         if let monitor = glfwGetWindowMonitor(pointer) {
-            let monitorObject = Unmanaged<GLMonitor>.fromOpaque(glfwGetMonitorUserPointer(monitor)).takeUnretainedValue()
-            return .fullscreen(monitorObject)
+            //let monitorObject = Unmanaged<GLMonitor>.fromOpaque(glfwGetMonitorUserPointer(monitor)).takeUnretainedValue()
+            let opaque = OpaquePointer(glfwGetMonitorUserPointer(monitor))
+            return .fullscreen(GLMonitor.fromOpaque(opaque))
         } else if attributes[Constant.iconified].bool {
             return .minimized
         } else if attributes[Constant.maximized].bool {
@@ -73,15 +81,16 @@ public class GLWindow: GLFWObject {
         glfwSetWindowShouldClose(pointer, shouldClose.int32)
     }
     
-    internal struct AttributeManager {
-        let windowPointer: OpaquePointer?
+    internal class AttributeManager {
+        var pointer: OpaquePointer?
+        init(_ pointer: OpaquePointer?) { self.pointer = pointer }
         subscript(attribute: Int32) -> Int32 {
-            get { glfwGetWindowAttrib(windowPointer, attribute) }
-            set { glfwSetWindowAttrib(windowPointer, attribute, newValue) }
+            get { glfwGetWindowAttrib(pointer, attribute) }
+            set { glfwSetWindowAttrib(pointer, attribute, newValue) }
         }
     }
     
-    private var attributes: AttributeManager
+    private var attributes: AttributeManager { AttributeManager(pointer) }
     
     public func setTitle(to string: String) {
         glfwSetWindowTitle(pointer, string)
@@ -210,17 +219,8 @@ public class GLWindow: GLFWObject {
         frameChangeHandler?(GLFrame(origin: origin, size: size))
     }
     
-    public func getClipboardContents() -> String? {
-        glfwGetClipboardString(pointer).flatMap(String.init(cString:))
-    }
-    
-    public func setClipboardContents(_ string: String?) {
-        glfwSetClipboardString(pointer, string)
-    }
-    
-    init(_ pointer: OpaquePointer?) {
+    internal init(_ pointer: OpaquePointer?) {
         self.pointer = pointer
-        self.attributes = AttributeManager(windowPointer: pointer)
         
         guard let pointer = pointer else { return }
         glfwSetWindowUserPointer(pointer, Unmanaged.passUnretained(self).toOpaque())
@@ -281,8 +281,7 @@ public class GLWindow: GLFWObject {
             //let window = windowObject($0)
             let window = GLWindow.fromOpaque($0)
             print("key", $1, "scancode", $2, "state", $3, "mods", $4)
-            //window.keyInputHandler?(GLInput.Key($1), Int($2), GLInput.ButtonState($3), GLInput.Key.Modifier(rawValue: $4))
-            window.keyInputHandler?(GLKey($1), $2.int, GLKey.State($3), GLKey.Modifier(rawValue: $4))
+            window.keyInputHandler?(GLKeyboard.Key($1), $2.int, GLKeyboard.Key.State($3), GLKeyboard.Modifier(rawValue: $4))
         }
         glfwSetCharCallback(pointer) {
             //let window = windowObject($0)
@@ -290,14 +289,28 @@ public class GLWindow: GLFWObject {
             guard let scalar = UnicodeScalar($1) else { return }
             window.textInputHandler?(String(scalar))
         }
-    }
-    
-    public var context: GLContext {
-        GLContext(pointer)
+        glfwSetCursorEnterCallback(pointer) {
+            let window = GLWindow.fromOpaque($0)
+            $1.bool ? window.cursorEnterHandler?() : window.cursorExitHandler?()
+        }
+        glfwSetMouseButtonCallback(pointer) {
+            let window = GLWindow.fromOpaque($0)
+            window.mouseButtonHandler?(GLMouse.Button(rawValue: $1) ?? .left, GLMouse.Button.State(rawValue: $2) ?? .released, GLKeyboard.Modifier(rawValue: $3))
+        }
+        glfwSetScrollCallback(pointer) {
+            let window = GLWindow.fromOpaque($0)
+            window.scrollInputHandler?(GLPoint(x: $1, y: $2))
+        }
+        glfwSetDropCallback(pointer) {
+            let window = GLWindow.fromOpaque($0)
+            let cStringArray = Array.init(UnsafeBufferPointer(start: $2, count: $1.int))
+            let array = cStringArray.compactMap({$0}).map(String.init(cString:))
+            window.dragAndDropHandler?(array)
+        }
     }
     
     deinit {
-        GLWindow.destroy(self)
+        destroy()
     }
     
     public static func create<T: BinaryInteger>(size: GLSize<T>, title: String = "", context: GLContext? = nil) -> GLWindow {
@@ -313,8 +326,24 @@ public class GLWindow: GLFWObject {
         }
     }
     
-    public static func destroy(_ window: GLWindow) {
-        glfwSetWindowUserPointer(window.pointer, nil)
-        glfwDestroyWindow(window.pointer)
+    public func destroy() {
+        glfwSetWindowPosCallback(pointer, nil)
+        glfwSetWindowSizeCallback(pointer, nil)
+        glfwSetWindowCloseCallback(pointer, nil)
+        glfwSetWindowRefreshCallback(pointer, nil)
+        glfwSetWindowFocusCallback(pointer, nil)
+        glfwSetWindowIconifyCallback(pointer, nil)
+        glfwSetWindowMaximizeCallback(pointer, nil)
+        glfwSetFramebufferSizeCallback(pointer, nil)
+        glfwSetWindowContentScaleCallback(pointer, nil)
+        glfwSetKeyCallback(pointer, nil)
+        glfwSetCharCallback(pointer, nil)
+        glfwSetCursorEnterCallback(pointer, nil)
+        glfwSetMouseButtonCallback(pointer, nil)
+        glfwSetScrollCallback(pointer, nil)
+        glfwSetDropCallback(pointer, nil)
+        
+        glfwSetWindowUserPointer(pointer, nil)
+        glfwDestroyWindow(pointer)
     }
 }

@@ -1,7 +1,7 @@
 import Foundation
 import glfw3
 
-public class GLMonitor: GLFWObject {
+public final class GLMonitor: GLObject {
     internal(set) public var pointer: OpaquePointer?
     
     public var connectionHandler: (() -> Void)?
@@ -66,10 +66,38 @@ public class GLMonitor: GLFWObject {
         return GLSizeMM(width: width.int, height: height.int)
     }
     
+    public var contentScale: GLContentScale {
+        var xscale = Float.zero, yscale = Float.zero
+        glfwGetMonitorContentScale(pointer, &xscale, &yscale)
+        return GLContentScale(xscale: xscale, yscale: yscale)
+    }
+    
     public var workArea: GLFrame<Int> {
         var x = Int32.zero, y = Int32.zero, width = Int32.zero, height = Int32.zero
         glfwGetMonitorWorkarea(pointer, &x, &y, &width, &height)
         return GLFrame(x: x.int, y: y.int, width: width.int, height: height.int)
+    }
+    
+    public struct VideoMode: Equatable, Codable, Hashable {
+        public var redBitDepth, greenBitDepth, blueBitDepth: Int
+        public var size: GLSize<Int>
+        public var refreshRate: Int
+        internal init(_ vidMode: GLFWvidmode) {
+            (redBitDepth, greenBitDepth, blueBitDepth) = (vidMode.redBits.int, vidMode.greenBits.int, vidMode.blueBits.int)
+            size = [vidMode.width.int, vidMode.height.int]
+            refreshRate = vidMode.refreshRate.int
+        }
+    }
+    
+    public var currentVideoMode: VideoMode {
+        return VideoMode(glfwGetVideoMode(pointer).pointee)
+    }
+    
+    public var videoModes: [VideoMode] {
+        var count = Int32.zero
+        let modes = glfwGetVideoModes(pointer, &count)
+        let videoModes: [GLFWvidmode] = Array(UnsafeBufferPointer(start: modes, count: count.int))
+        return videoModes.map(VideoMode.init)
     }
     
     public struct GammaStop: Equatable, Codable, Hashable {

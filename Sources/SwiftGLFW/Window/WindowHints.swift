@@ -1,6 +1,7 @@
 import Foundation
 import glfw3
 
+@frozen
 public struct GLWindowHints: ExpressibleByArrayLiteral, IteratorProtocol, Sequence {
     
     public typealias Element = Hint
@@ -85,6 +86,7 @@ public struct GLWindowHints: ExpressibleByArrayLiteral, IteratorProtocol, Sequen
             case any = 0, flushPipeline = 0x00035001, none
         }
         
+        @frozen
         public struct OpenGLVersion: Equatable, Hashable, Codable {
             public let major, minor: Int
             

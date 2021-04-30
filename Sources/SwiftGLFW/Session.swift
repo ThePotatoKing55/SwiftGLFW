@@ -1,7 +1,7 @@
 import Foundation
 import glfw3
 
-public enum GLFWSession {
+public enum GLSession {
     public struct InitHint: OptionSet {
         public let rawValue: Int
         public init(rawValue: Int) {
@@ -45,7 +45,7 @@ public enum GLFWSession {
     public static var errorHandler: ((GLFWError) -> Void)? {
         didSet {
             glfwSetErrorCallback { error, description in
-                GLFWSession.errorHandler?(GLFWError(rawValue: error) ?? .unknown)
+                GLSession.errorHandler?(GLFWError(rawValue: error) ?? .unknown)
             }
         }
     }
@@ -63,5 +63,25 @@ public enum GLFWSession {
     
     public static func terminate() {
         glfwTerminate()
+    }
+    
+    public static func getClipboardContents() -> String? {
+        glfwGetClipboardString(nil).flatMap(String.init(cString:))
+    }
+    
+    public static func setClipboardContents(_ string: String?) {
+        glfwSetClipboardString(nil, string)
+    }
+    
+    public static func pollInputEvents() {
+        glfwPollEvents()
+    }
+    
+    public static func waitEvents(timeout: TimeInterval = 0.0) {
+        timeout > 0 ? glfwWaitEventsTimeout(timeout) : glfwWaitEvents()
+    }
+    
+    public static func timeout() {
+        glfwPostEmptyEvent()
     }
 }

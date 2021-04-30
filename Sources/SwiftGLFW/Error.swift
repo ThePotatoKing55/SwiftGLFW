@@ -1,6 +1,7 @@
 import Foundation
 import glfw3
 
+@frozen
 public enum GLFWError: Int32, LocalizedError, Equatable {
     case noError = 0
     case notInitialized = 0x00010001

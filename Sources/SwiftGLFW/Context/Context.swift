@@ -1,12 +1,11 @@
 import Foundation
 import glfw3
 
-public class GLContext: GLFWObject {
+public class GLContext: GLObject {
     internal(set) public var pointer: OpaquePointer?
     
     init(_ pointer: OpaquePointer?) {
         self.pointer = pointer
-        self.attributes = GLWindow.AttributeManager(windowPointer: pointer)
     }
     
     public static var current: GLContext {
@@ -23,7 +22,7 @@ public class GLContext: GLFWObject {
     
     public typealias Hint = GLWindowHints.Hint
     
-    private var attributes: GLWindow.AttributeManager
+    private var attributes: GLWindow.AttributeManager { .init(pointer) }
     
     public var clientAPI: Hint.ClientAPI {
         Hint.ClientAPI(rawValue: attributes[Constant.clientAPI]) ?? .openGL
@@ -61,5 +60,11 @@ public class GLContext: GLFWObject {
     
     public var robustness: Hint.Robustness {
         Hint.Robustness(rawValue: attributes[Constant.contextRobustness]) ?? .none
+    }
+}
+
+extension GLWindow {
+    public var context: GLContext {
+        GLContext(pointer)
     }
 }
