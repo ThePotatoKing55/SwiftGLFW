@@ -238,61 +238,49 @@ public final class GLWindow: GLObject {
         }
         
         glfwSetWindowPosCallback(pointer) {
-            //let window = windowObject($0)
             let window = GLWindow.fromOpaque($0)
             //window.positionChangeHandler?(GLPoint(x: Int($1), y: Int($2)))
             window.positionChanged(to: GLPoint(x: $1, y: $2))
         }
         glfwSetWindowSizeCallback(pointer) {
-            //let window = windowObject($0)
             let window = GLWindow.fromOpaque($0)
             //window.sizeChangeHandler?(GLSize(width: Int($1), height: Int($2)))
             window.sizeChanged(to: GLSize(width: $1, height: $2))
         }
         glfwSetWindowCloseCallback(pointer) {
-            //let window = windowObject($0)
             let window = GLWindow.fromOpaque($0)
             //window.willCloseHandler?()
             if window.shouldCloseHandler?() == false { window.setShouldClose(to: false) }
         }
         glfwSetWindowRefreshCallback(pointer) {
-            //let window = windowObject($0)
             let window = GLWindow.fromOpaque($0)
             window.refreshHandler?()
         }
         glfwSetWindowFocusCallback(pointer) {
-            //let window = windowObject($0)
             let window = GLWindow.fromOpaque($0)
             $1 != false ? window.receiveFocusHandler?() : window.loseFocusHandler?()
         }
         glfwSetWindowIconifyCallback(pointer) {
-            //let window = windowObject($0)
             let window = GLWindow.fromOpaque($0)
             $1 != false ? window.minimizeHandler?() : window.restoreHandler?()
         }
         glfwSetWindowMaximizeCallback(pointer) {
-            //let window = windowObject($0)
             let window = GLWindow.fromOpaque($0)
             $1 != false ? window.maximizeHandler?() : window.restoreHandler?()
         }
         glfwSetFramebufferSizeCallback(pointer) {
-            //let window = windowObject($0)
             let window = GLWindow.fromOpaque($0)
             window.framebufferSizeChangeHandler?(GLSize(width: Int($1), height: Int($2)))
         }
         glfwSetWindowContentScaleCallback(pointer) {
-            //let window = windowObject($0)
             let window = GLWindow.fromOpaque($0)
             window.contentScaleChangeHandler?(GLContentScale(xscale: $1, yscale: $2))
         }
         glfwSetKeyCallback(pointer) {
-            //let window = windowObject($0)
             let window = GLWindow.fromOpaque($0)
-            print("key", $1, "scancode", $2, "state", $3, "mods", $4)
             window.keyInputHandler?(GLKeyboard.Key($1), $2.int, GLKeyboard.Key.State($3), GLKeyboard.Modifier(rawValue: $4))
         }
         glfwSetCharCallback(pointer) {
-            //let window = windowObject($0)
             let window = GLWindow.fromOpaque($0)
             guard let scalar = UnicodeScalar($1) else { return }
             window.textInputHandler?(String(scalar))
