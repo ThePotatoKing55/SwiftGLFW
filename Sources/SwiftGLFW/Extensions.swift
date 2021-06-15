@@ -1,5 +1,5 @@
 import Foundation
-import glfw3
+import CGLFW3
 
 extension Int32: ExpressibleByBooleanLiteral {
     var bool: Bool {

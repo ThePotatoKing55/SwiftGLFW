@@ -18,7 +18,7 @@ Setup is pretty painless, requiring just a few lines of code:
 
 ```swift
 import SwiftGLFW
-import glfw3 // Not strictly necessary, but nicely imports OpenGL
+import CGLFW3 // Not strictly necessary, but nicely imports OpenGL
 
 ...
 

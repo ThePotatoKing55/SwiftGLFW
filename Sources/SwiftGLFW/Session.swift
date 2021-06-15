@@ -1,5 +1,5 @@
 import Foundation
-import glfw3
+import CGLFW3
 
 public enum GLSession {
     public struct InitHint: OptionSet {

@@ -1,5 +1,5 @@
 import Foundation
-import glfw3
+import CGLFW3
 
 @frozen
 public struct GLWindowHints: ExpressibleByArrayLiteral, IteratorProtocol, Sequence {
