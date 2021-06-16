@@ -1,5 +1,5 @@
 import Foundation
-import CGLFW3
+import GLFW
 
 public struct GLGamepad: Hashable, Codable, Equatable {
     public static subscript(id: ID) -> GLGamepad? {

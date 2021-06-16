@@ -1,5 +1,5 @@
 import Foundation
-import CGLFW3
+import GLFW
 
 extension GLWindow {
     public var keyboard: GLKeyboard {

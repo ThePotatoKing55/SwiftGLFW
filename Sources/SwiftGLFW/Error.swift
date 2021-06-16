@@ -1,5 +1,5 @@
 import Foundation
-import CGLFW3
+import GLFW
 
 @frozen
 public enum GLFWError: Int32, LocalizedError, Equatable {

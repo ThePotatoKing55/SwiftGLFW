@@ -1,5 +1,5 @@
 import Foundation
-import CGLFW3
+import GLFW
 
 protocol GLObject: Equatable {
     var pointer: OpaquePointer? { get set }

@@ -1,5 +1,5 @@
 import Foundation
-import CGLFW3
+import GLFW
 
 public struct GLJoystick: Hashable, Codable, Equatable {
     public static subscript(id: ID) -> GLJoystick? {
