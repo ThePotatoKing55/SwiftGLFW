@@ -5,12 +5,12 @@ import PackageDescription
 let package = Package(
     name: "SwiftGLFW",
     products: [
-        .library(name: "SwiftGLFW", targets: ["SwiftGLFW"])
+        .library(name: "GLFW", targets: ["GLFW"])
     ],
     dependencies: [
         .package(url: "https://github.com/thepotatoking55/CGLFW3", .branch("main"))
     ],
     targets: [
-        .target(name: "SwiftGLFW", dependencies: ["CGLFW3"])
+        .target(name: "GLFW", dependencies: ["CGLFW3"])
     ]
 )

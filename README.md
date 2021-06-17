@@ -1,6 +1,8 @@
 # SwiftGLFW
 
-A Swift library that makes GLFW a bit more manageable. It's a bit of a deviation from the original C library, as not only does it clear away non-Swifty things like pointers and properly wrap callback closures, but it also has a much more object-oriented architecture.
+A Swift library that adds a more Swifty interface to [GLFW](https://github.com/glfw/glfw). So far, I've only tested it on macOS, but it should compile and run on Windows and Linux.
+
+If you just want the pure C library, I also made [CGLFW3](https://github.com/thepotatoking55/CGLFW3), which wraps GLFW as a Swift package.
 
 ## Installation
 
@@ -17,7 +19,7 @@ Installing is pretty standard for the Swift Package Manager. Add this to your de
 Setup is pretty painless, requiring just a few lines of code:
 
 ```swift
-import SwiftGLFW
+import GLFW
 
 ...
 
@@ -79,7 +81,7 @@ window.scrollInputHandler = { offset in ... }
 let monitor = GLMonitor.primary
 monitor.setGamma(2.2)
 ```
-    
+
 ### Gamepad Support
 
 GLFW supports gamepads, so this does too!
