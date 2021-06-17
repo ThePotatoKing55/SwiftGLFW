@@ -1,4 +1,3 @@
-import Foundation
 import CGLFW3
 
 public struct GLJoystick: Hashable, Codable, Equatable {

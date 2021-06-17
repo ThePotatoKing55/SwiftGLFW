@@ -1,5 +1,3 @@
-import Foundation
-
 @frozen
 public struct GLFrame<Scalar: SIMDScalar>: Equatable, Hashable, Codable {
     public var simd: SIMD4<Scalar>

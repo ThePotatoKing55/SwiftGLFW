@@ -1,4 +1,3 @@
-import Foundation
 import CGLFW3
 
 public enum GLSession {
@@ -27,7 +26,7 @@ public enum GLSession {
         public let string: String
     }
     
-    public static var currentTime: TimeInterval {
+    public static var currentTime: Double {
         glfwGetTime()
     }
     
@@ -77,7 +76,7 @@ public enum GLSession {
         glfwPollEvents()
     }
     
-    public static func waitEvents(timeout: TimeInterval = 0.0) {
+    public static func waitEvents(timeout: Double = 0.0) {
         timeout > 0 ? glfwWaitEventsTimeout(timeout) : glfwWaitEvents()
     }
     

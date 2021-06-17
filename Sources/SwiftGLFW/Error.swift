@@ -1,8 +1,7 @@
-import Foundation
 import CGLFW3
 
 @frozen
-public enum GLFWError: Int32, LocalizedError, Equatable {
+public enum GLFWError: Int32, Error, Equatable {
     case noError = 0
     case notInitialized = 0x00010001
     case noCurrentContext = 0x00010002
@@ -16,11 +15,7 @@ public enum GLFWError: Int32, LocalizedError, Equatable {
     case noWindowContext = 0x0001000A
     case unknown
     
-    public var localizedDescription: String {
-        errorDescription
-    }
-    
-    public var errorDescription: String {
+    public var description: String {
         switch self {
         case .noError: return "GLFW_NO_ERROR: No error has occurred."
         case .notInitialized: return "GLFW_NOT_INITIALIZED: GLFW has not been initialized."

@@ -1,4 +1,3 @@
-import Foundation
 import CGLFW3
 
 public struct GLGamepad: Hashable, Codable, Equatable {

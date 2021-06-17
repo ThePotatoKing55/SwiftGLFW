@@ -1,4 +1,3 @@
-import Foundation
 import CGLFW3
 
 public class GLContext: GLObject {

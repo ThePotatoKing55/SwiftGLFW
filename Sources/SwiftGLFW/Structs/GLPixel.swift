@@ -1,5 +1,3 @@
-import Foundation
-
 @frozen
 public struct GLPixel: Equatable, Hashable, Codable, ExpressibleByIntegerLiteral {
     public var rawBits: UInt32

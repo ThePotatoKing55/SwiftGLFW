@@ -1,5 +1,3 @@
-import Foundation
-
 @frozen
 public struct GLPoint<Scalar: SIMDScalar>: Equatable, Hashable, Codable {
     public var simd: SIMD2<Scalar>
