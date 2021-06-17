@@ -1,5 +1,5 @@
 import Foundation
-import GLFW
+import CGLFW3
 
 @frozen
 public struct GLWindowHints: ExpressibleByArrayLiteral, IteratorProtocol, Sequence {
@@ -150,15 +150,15 @@ public struct GLWindowHints: ExpressibleByArrayLiteral, IteratorProtocol, Sequen
         case .alphaBitDepth(let depth): glfwWindowHint(Constant.alphaBits, depth.int32)
         case .depthBitDepth(let depth): glfwWindowHint(Constant.depthBits, depth.int32)
         case .stencilBitDepth(let depth): glfwWindowHint(Constant.stencilBits, depth.int32)
-        case .useStereoscopicRendering: glfwWindowHint(Constant.stereoRendering, true)
+        case .useStereoscopicRendering(let bool): glfwWindowHint(Constant.stereoRendering, bool.int32)
         case .msaaSamples(let samples): glfwWindowHint(Constant.msaaSamples, samples.int32)
-        case .srgbCapable: glfwWindowHint(Constant.srgbCapable, true)
+        case .srgbCapable(let bool): glfwWindowHint(Constant.srgbCapable, bool.int32)
         case .refreshRate(let rate): glfwWindowHint(Constant.monitorRefreshRate, rate.int32)
         case .clientAPI(let api): glfwWindowHint(Constant.clientAPI, api.rawValue)
         case .contextCreationAPI(let api): glfwWindowHint(Constant.contextCreationAPI, api.rawValue)
         case .openGLVersion(let version):
-            glfwWindowHint(Constant.contextVersionMajor, Int32(version.major))
-            glfwWindowHint(Constant.contextVersionMinor, Int32(version.minor))
+            glfwWindowHint(Constant.contextVersionMajor, version.major.int32)
+            glfwWindowHint(Constant.contextVersionMinor, version.minor.int32)
         case .openGLCompatibility(let level): glfwWindowHint(Constant.openglForwardCompatibility, level.rawValue)
         case .enableDebugMode(let bool): glfwWindowHint(Constant.openglDebugContext, bool.int32)
         case .openGLProfile(let profile): glfwWindowHint(Constant.openglProfile, profile.rawValue)

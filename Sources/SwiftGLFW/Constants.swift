@@ -1,5 +1,5 @@
 import Foundation
-import GLFW
+import CGLFW3
 
 enum Constant {
     static let `true`: Int32 = GLFW_TRUE

@@ -1,5 +1,5 @@
 import Foundation
-import GLFW
+import CGLFW3
 
 public class GLContext: GLObject {
     internal(set) public var pointer: OpaquePointer?

@@ -1,5 +1,5 @@
 import Foundation
-import GLFW
+import CGLFW3
 
 @frozen
 public struct GLImage: Equatable, Hashable, Codable {

@@ -1,5 +1,5 @@
 import Foundation
-import GLFW
+import CGLFW3
 
 protocol GLInputDevice {
     var window: GLWindow { get }

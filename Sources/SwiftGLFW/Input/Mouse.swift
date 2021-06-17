@@ -1,5 +1,5 @@
 import Foundation
-import GLFW
+import CGLFW3
 
 extension GLWindow {
     public var mouse: GLMouse {

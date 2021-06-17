@@ -18,7 +18,6 @@ Setup is pretty painless, requiring just a few lines of code:
 
 ```swift
 import SwiftGLFW
-import GLFW // Not strictly necessary, but nicely imports OpenGL
 
 ...
 
@@ -37,8 +36,6 @@ func main() {
             window.close()
         }
     }
-    
-    glClearColor(0.2, 0.3, 0.3, 1.0) // OpenGL function imported through glfw3
     
     while !window.shouldClose {
         GLSession.pollInputEvents()
