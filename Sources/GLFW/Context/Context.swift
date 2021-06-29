@@ -1,14 +1,14 @@
 import CGLFW3
 
-public class GLContext: GLFWObject {
+public class GLFWContext: GLFWObject {
     internal(set) public var pointer: OpaquePointer?
     
     internal init(_ pointer: OpaquePointer?) {
         self.pointer = pointer
     }
     
-    public static var current: GLContext {
-        GLContext(glfwGetCurrentContext())
+    public static var current: GLFWContext {
+        GLFWContext(glfwGetCurrentContext())
     }
     
     public func makeCurrent() {
@@ -69,7 +69,7 @@ public class GLContext: GLFWObject {
 }
 
 extension GLFWWindow {
-    public var context: GLContext {
-        GLContext(pointer)
+    public var context: GLFWContext {
+        GLFWContext(pointer)
     }
 }

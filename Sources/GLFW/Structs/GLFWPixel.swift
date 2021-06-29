@@ -1,5 +1,5 @@
 @frozen
-public struct GLPixel: Equatable, Hashable, Codable, ExpressibleByIntegerLiteral {
+public struct GLFWPixel: Equatable, Hashable, Codable, ExpressibleByIntegerLiteral {
     public var rawBits: UInt32
     
     public var redBits: UInt8 {
@@ -66,15 +66,15 @@ public struct GLPixel: Equatable, Hashable, Codable, ExpressibleByIntegerLiteral
     }
 }
 
-public extension GLPixel {
-    func settingRed(_ red: Float) -> GLPixel { GLPixel(red: red, green: green, blue: blue) }
-    func settingRed<T: BinaryInteger>(_ redBits: T) -> GLPixel { GLPixel(red: UInt8(redBits), green: UInt8(greenBits), blue: UInt8(blueBits)) }
-    func settingGreen(_ green: Float) -> GLPixel { GLPixel(red: red, green: green, blue: blue) }
-    func settingGreen<T: BinaryInteger>(_ greenBits: T) -> GLPixel { GLPixel(red: UInt8(redBits), green: UInt8(greenBits), blue: UInt8(blueBits)) }
-    func settingBlue(_ blue: Float) -> GLPixel { GLPixel(red: red, green: green, blue: blue) }
-    func settingBlue<T: BinaryInteger>(_ blueBits: T) -> GLPixel { GLPixel(red: UInt8(redBits), green: UInt8(greenBits), blue: UInt8(blueBits)) }
-    func settingAlpha(_ alpha: Float) -> GLPixel { GLPixel(red: red, green: green, blue: blue) }
-    func settingAlpha<T: BinaryInteger>(_ alphaBits: T) -> GLPixel { GLPixel(red: UInt8(redBits), green: UInt8(greenBits), blue: UInt8(blueBits)) }
+public extension GLFWPixel {
+    func settingRed(_ red: Float) -> GLFWPixel { GLFWPixel(red: red, green: green, blue: blue) }
+    func settingRed<T: BinaryInteger>(_ redBits: T) -> GLFWPixel { GLFWPixel(red: UInt8(redBits), green: UInt8(greenBits), blue: UInt8(blueBits)) }
+    func settingGreen(_ green: Float) -> GLFWPixel { GLFWPixel(red: red, green: green, blue: blue) }
+    func settingGreen<T: BinaryInteger>(_ greenBits: T) -> GLFWPixel { GLFWPixel(red: UInt8(redBits), green: UInt8(greenBits), blue: UInt8(blueBits)) }
+    func settingBlue(_ blue: Float) -> GLFWPixel { GLFWPixel(red: red, green: green, blue: blue) }
+    func settingBlue<T: BinaryInteger>(_ blueBits: T) -> GLFWPixel { GLFWPixel(red: UInt8(redBits), green: UInt8(greenBits), blue: UInt8(blueBits)) }
+    func settingAlpha(_ alpha: Float) -> GLFWPixel { GLFWPixel(red: red, green: green, blue: blue) }
+    func settingAlpha<T: BinaryInteger>(_ alphaBits: T) -> GLFWPixel { GLFWPixel(red: UInt8(redBits), green: UInt8(greenBits), blue: UInt8(blueBits)) }
     
     mutating func setRed(_ red: Float) { self = settingRed(red) }
     mutating func setRed<T: BinaryInteger>(_ redBits: T) { self = settingRed(redBits) }
@@ -85,30 +85,30 @@ public extension GLPixel {
     mutating func setAlpha(_ alpha: Float) { self = settingAlpha(alpha) }
     mutating func setAlpha<T: BinaryInteger>(_ alphaBits: T) { self = settingAlpha(alphaBits) }
     
-    var withPremultipliedAlpha: GLPixel { GLPixel(red: red * alpha, green: green * alpha, blue: blue * alpha, alpha: alpha) }
+    var withPremultipliedAlpha: GLFWPixel { GLFWPixel(red: red * alpha, green: green * alpha, blue: blue * alpha, alpha: alpha) }
     
-    func mixed(with other: GLPixel) -> GLPixel {
+    func mixed(with other: GLFWPixel) -> GLFWPixel {
         let red = self.red * self.alpha * (1 - other.alpha) + other.red * other.alpha
         let green = self.green * self.alpha * (1 - other.alpha) + other.green * other.alpha
         let blue = self.blue * self.alpha * (1 - other.alpha) + other.blue * other.alpha
         let alpha = self.alpha * (1 - other.alpha) + other.alpha
-        return GLPixel(red: red, green: green, blue: blue, alpha: alpha)
+        return GLFWPixel(red: red, green: green, blue: blue, alpha: alpha)
     }
     
-    mutating func mix(with other: GLPixel) {
+    mutating func mix(with other: GLFWPixel) {
         self = mixed(with: other)
     }
     
-    static let white = GLPixel(0xFFFFFFFF)
-    static let black = GLPixel(0x000000FF)
-    static let clear = GLPixel(0x00000000)
-    static let red = GLPixel(0xFF0000FF)
-    static let orange = GLPixel(0xFF8000FF)
-    static let yellow = GLPixel(0xFFFF00FF)
-    static let green = GLPixel(0x00FF00FF)
-    static let teal = GLPixel(0x00FF80FF)
-    static let blue = GLPixel(0x0000FFFF)
-    static let magenta = GLPixel(0xFF00FFFF)
-    static let cyan = GLPixel(0x00FFFFFF)
-    static let normal = GLPixel(0x8080FFFF)
+    static let white = GLFWPixel(0xFFFFFFFF)
+    static let black = GLFWPixel(0x000000FF)
+    static let clear = GLFWPixel(0x00000000)
+    static let red = GLFWPixel(0xFF0000FF)
+    static let orange = GLFWPixel(0xFF8000FF)
+    static let yellow = GLFWPixel(0xFFFF00FF)
+    static let green = GLFWPixel(0x00FF00FF)
+    static let teal = GLFWPixel(0x00FF80FF)
+    static let blue = GLFWPixel(0x0000FFFF)
+    static let magenta = GLFWPixel(0xFF00FFFF)
+    static let cyan = GLFWPixel(0x00FFFFFF)
+    static let normal = GLFWPixel(0x8080FFFF)
 }

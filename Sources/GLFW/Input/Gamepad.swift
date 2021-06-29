@@ -1,10 +1,10 @@
 import CGLFW3
 
-public struct GLGamepad: Hashable, Codable, Equatable {
-    public static subscript(id: ID) -> GLGamepad? {
+public struct GLFWGamepad: Hashable, Codable, Equatable {
+    public static subscript(id: ID) -> GLFWGamepad? {
         get {
             if glfwJoystickIsGamepad(id.rawValue) == true {
-                return GLGamepad(gamepadID: id)
+                return GLFWGamepad(gamepadID: id)
             } else {
                 return nil
             }
@@ -19,8 +19,8 @@ public struct GLGamepad: Hashable, Codable, Equatable {
         }
     }
     
-    public static var allConnected: [GLGamepad] {
-        (0...15).compactMap { GLGamepad[ID(rawValue: $0) ?? .unknown] }
+    public static var allConnected: [GLFWGamepad] {
+        (0...15).compactMap { GLFWGamepad[ID(rawValue: $0) ?? .unknown] }
     }
     
     public var gamepadID: ID

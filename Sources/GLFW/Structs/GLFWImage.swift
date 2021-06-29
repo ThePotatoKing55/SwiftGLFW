@@ -1,9 +1,9 @@
 import CGLFW3
 
 @frozen
-public struct GLImage: Equatable, Hashable, Codable {
-    public var pixels: [Int: GLPixel] = [:]
-    public var size: GLSize<Int> = []
+public struct GLFWImage: Equatable, Hashable, Codable {
+    public var pixels: [Int: GLFWPixel] = [:]
+    public var size: GLFWSize<Int> = []
     public var pixelArray: [UInt8] {
         var array = [UInt8](repeating: .zero, count: size.width * size.height * 4)
         pixels.forEach { index, pixel in

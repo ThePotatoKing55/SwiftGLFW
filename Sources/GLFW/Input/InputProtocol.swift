@@ -1,11 +1,11 @@
 import CGLFW3
 
-protocol GLInputDevice {
+protocol GLFWInputDevice {
     var window: GLFWWindow { get }
     init(in window: GLFWWindow)
 }
 
-extension GLInputDevice {
+extension GLFWInputDevice {
     var pointer: OpaquePointer? {
         window.pointer
     }

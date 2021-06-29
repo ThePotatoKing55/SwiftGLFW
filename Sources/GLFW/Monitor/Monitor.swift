@@ -51,13 +51,13 @@ public final class GLFWMonitor: GLFWObject {
         String(cString: glfwGetMonitorName(pointer))
     }
     
-    public var virtualPosition: GLPoint<Int> {
+    public var virtualPosition: GLFWPoint<Int> {
         var x = Int32.zero, y = Int32.zero
         glfwGetMonitorPos(pointer, &x, &y)
-        return GLPoint(x: x.int, y: y.int)
+        return GLFWPoint(x: x.int, y: y.int)
     }
     
-    public typealias GLSizeMM = GLSize<Int>
+    public typealias GLSizeMM = GLFWSize<Int>
     
     public var physicalSize: GLSizeMM {
         var width = Int32.zero, height = Int32.zero
@@ -65,21 +65,21 @@ public final class GLFWMonitor: GLFWObject {
         return GLSizeMM(width: width.int, height: height.int)
     }
     
-    public var contentScale: GLContentScale {
+    public var contentScale: GLFWContentScale {
         var xscale = Float.zero, yscale = Float.zero
         glfwGetMonitorContentScale(pointer, &xscale, &yscale)
-        return GLContentScale(xscale: xscale, yscale: yscale)
+        return GLFWContentScale(xscale: xscale, yscale: yscale)
     }
     
-    public var workArea: GLFrame<Int> {
+    public var workArea: GLFWFrame<Int> {
         var x = Int32.zero, y = Int32.zero, width = Int32.zero, height = Int32.zero
         glfwGetMonitorWorkarea(pointer, &x, &y, &width, &height)
-        return GLFrame(x: x.int, y: y.int, width: width.int, height: height.int)
+        return GLFWFrame(x: x.int, y: y.int, width: width.int, height: height.int)
     }
     
     public struct VideoMode: Equatable, Codable, Hashable {
         public var redBitDepth, greenBitDepth, blueBitDepth: Int
-        public var size: GLSize<Int>
+        public var size: GLFWSize<Int>
         public var refreshRate: Int
         internal init(_ vidMode: GLFWvidmode) {
             (redBitDepth, greenBitDepth, blueBitDepth) = (vidMode.redBits.int, vidMode.greenBits.int, vidMode.blueBits.int)

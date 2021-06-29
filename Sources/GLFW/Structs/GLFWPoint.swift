@@ -1,5 +1,5 @@
 @frozen
-public struct GLPoint<Scalar: SIMDScalar>: Equatable, Hashable, Codable {
+public struct GLFWPoint<Scalar: SIMDScalar>: Equatable, Hashable, Codable {
     public var simd: SIMD2<Scalar>
     public var x: Scalar { get { simd.x } set { simd.x = newValue } }
     public var y: Scalar { get { simd.y } set { simd.y = newValue } }
@@ -11,7 +11,7 @@ public struct GLPoint<Scalar: SIMDScalar>: Equatable, Hashable, Codable {
     public init(_ simd: SIMD2<Scalar> = .init()) { self.simd = simd }
 }
 
-extension GLPoint: ExpressibleByArrayLiteral {
+extension GLFWPoint: ExpressibleByArrayLiteral {
     public var arrayRepresentation: [Scalar] { [x, y] }
     
     @inlinable
@@ -20,8 +20,8 @@ extension GLPoint: ExpressibleByArrayLiteral {
     }
 }
 
-extension GLPoint where Scalar: FixedWidthInteger {
-    public static var zero: GLPoint<Scalar> { Self(.zero) }
+extension GLFWPoint where Scalar: FixedWidthInteger {
+    public static var zero: GLFWPoint<Scalar> { Self(.zero) }
     
     @inlinable
     public static func + (lhs: Self, rhs: Self) -> Self { Self(lhs.simd &+ rhs.simd) }
@@ -33,8 +33,8 @@ extension GLPoint where Scalar: FixedWidthInteger {
     public static func * (lhs: Self, rhs: Scalar) -> Self { Self(lhs.simd &* rhs) }
 }
 
-extension GLPoint where Scalar: FloatingPoint {
-    public static var zero: GLPoint<Scalar> { Self(.zero) }
+extension GLFWPoint where Scalar: FloatingPoint {
+    public static var zero: GLFWPoint<Scalar> { Self(.zero) }
     
     @inlinable
     public static func + (lhs: Self, rhs: Self) -> Self { Self(lhs.simd + rhs.simd) }
@@ -49,7 +49,7 @@ extension GLPoint where Scalar: FloatingPoint {
     public static func / (lhs: Self, rhs: Scalar) -> Self { Self(lhs.simd / rhs) }
     
     @inlinable
-    public func distance(to other: GLPoint) -> Scalar {
+    public func distance(to other: GLFWPoint) -> Scalar {
         var distance = simd - other.simd
         distance *= distance
         return distance.sum().squareRoot()

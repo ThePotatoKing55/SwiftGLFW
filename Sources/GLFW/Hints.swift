@@ -1,6 +1,6 @@
 import CGLFW3
 
-extension GLSession {
+extension GLFWSession {
     public struct Hints {
         @propertyWrapper public struct BoolHint {
             public var wrappedValue: Bool? = nil {

@@ -1,6 +1,6 @@
 import CGLFW3
 
-public enum GLSession {    
+public enum GLFWSession {    
     public static var hints = Hints()
     
     public struct Version: Hashable, Equatable, Comparable {
@@ -37,9 +37,9 @@ public enum GLSession {
     
     public static var onReceiveError: ((GLFWError) -> Void)? {
         didSet {
-            if GLSession.onReceiveError != nil {
+            if GLFWSession.onReceiveError != nil {
                 glfwSetErrorCallback { error, description in
-                    GLSession.onReceiveError!(GLFWError(underlyingError: error, description: description))
+                    GLFWSession.onReceiveError!(GLFWError(underlyingError: error, description: description))
                 }
             } else {
                 glfwSetErrorCallback(nil)

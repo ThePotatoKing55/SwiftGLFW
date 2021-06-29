@@ -1,12 +1,12 @@
 import CGLFW3
 
 extension GLFWWindow {
-    public var keyboard: GLKeyboard {
-        GLKeyboard(in: self)
+    public var keyboard: GLFWKeyboard {
+        GLFWKeyboard(in: self)
     }
 }
 
-public final class GLKeyboard {
+public final class GLFWKeyboard {
     private let window: GLFWWindow
     private var pointer: OpaquePointer? { window.pointer }
     public init(in window: GLFWWindow) {
@@ -25,7 +25,7 @@ public final class GLKeyboard {
     
     public enum Key: Int32 {
         public enum State: Int32 {
-            case released, pressed, unknown = -1
+            case released, pressed, repeated, unknown = -1
             public init(_ rawValue: Int32) {
                 self = Self(rawValue: rawValue) ?? .unknown
             }

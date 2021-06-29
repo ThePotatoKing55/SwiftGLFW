@@ -1,12 +1,12 @@
 import CGLFW3
 
 extension GLFWWindow {
-    public var mouse: GLMouse {
-        GLMouse(in: self)
+    public var mouse: GLFWMouse {
+        GLFWMouse(in: self)
     }
 }
 
-public final class GLMouse {
+public final class GLFWMouse {
     private let window: GLFWWindow
     private var pointer: OpaquePointer? { window.pointer }
     public init(in window: GLFWWindow) {
@@ -46,11 +46,11 @@ public final class GLMouse {
         button.state(in: window)
     }
     
-    public var cursorPosition: GLPoint<Double> {
+    public var cursorPosition: GLFWPoint<Double> {
         get {
             var xpos = Double.zero, ypos = Double.zero
             glfwGetCursorPos(window.pointer, &xpos, &ypos)
-            return GLPoint(x: xpos, y: ypos)
+            return GLFWPoint(x: xpos, y: ypos)
         }
         set {
             glfwSetCursorPos(window.pointer, newValue.x, newValue.y)
@@ -72,7 +72,7 @@ public final class GLMouse {
         }
 
         case standard(StandardCursor),
-             image(GLImage),
+             image(GLFWImage),
              `default`
     }
     

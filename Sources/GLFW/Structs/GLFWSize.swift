@@ -1,5 +1,5 @@
 @frozen
-public struct GLSize<Scalar: SIMDScalar>: Equatable, Hashable, Codable {
+public struct GLFWSize<Scalar: SIMDScalar>: Equatable, Hashable, Codable {
     public var simd: SIMD2<Scalar>
     
     @inlinable
@@ -21,24 +21,24 @@ public struct GLSize<Scalar: SIMDScalar>: Equatable, Hashable, Codable {
     public init(_ simd: SIMD2<Scalar>) { self.simd = simd }
 }
 
-extension GLSize: ExpressibleByArrayLiteral {
+extension GLFWSize: ExpressibleByArrayLiteral {
     public var arrayRepresentation: [Scalar] { [width, height] }
     
     @inlinable
     public init(arrayLiteral elements: Scalar...) {
-        precondition(elements.count >= 2, "GLSize must be initialized with an array of at least 2.")
+        precondition(elements.count >= 2, "GLFWSize must be initialized with an array of at least 2.")
         self.init(width: elements[0], height: elements[1])
     }
 }
 
-extension GLSize where Scalar: FixedWidthInteger {
+extension GLFWSize where Scalar: FixedWidthInteger {
     public static var zero: Self { Self() }
     
     @inlinable
     public init() { self.init(width: .zero, height: .zero) }
 }
 
-extension GLSize where Scalar: FloatingPoint {
+extension GLFWSize where Scalar: FloatingPoint {
     
     public static var zero: Self { Self() }
     
@@ -46,7 +46,7 @@ extension GLSize where Scalar: FloatingPoint {
     public init() { self.init(width: .zero, height: .zero) }
 }
 
-extension GLSize where Scalar: Numeric {
+extension GLFWSize where Scalar: Numeric {
     public var area: Scalar {
         width * height
     }

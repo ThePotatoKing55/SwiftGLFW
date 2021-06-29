@@ -1,10 +1,10 @@
 import CGLFW3
 
-public struct GLJoystick: Hashable, Codable, Equatable {
-    public static subscript(id: ID) -> GLJoystick? {
+public struct GLFWJoystick: Hashable, Codable, Equatable {
+    public static subscript(id: ID) -> GLFWJoystick? {
         get {
             if glfwJoystickPresent(id.rawValue) == true {
-                return GLJoystick(joystickID: id)
+                return GLFWJoystick(joystickID: id)
             } else {
                 return nil
             }
