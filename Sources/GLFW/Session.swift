@@ -47,8 +47,10 @@ public enum GLFWSession {
         }
     }
     
-    public static func initialize() {
-        glfwInit()
+    public static func initialize() throws {
+        if glfwInit() != 1 {
+            try checkError()
+        }
     }
     
     public static func terminate() {
