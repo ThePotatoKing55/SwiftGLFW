@@ -1,17 +1,7 @@
 import CGLFW3
 
-public enum GLSession {
-    public struct InitHint: OptionSet {
-        public let rawValue: Int
-        public init(rawValue: Int) {
-            self.rawValue = rawValue
-        }
-        
-        public static let joystickHatsAsButtons = InitHint(rawValue: 1 << 0)
-        public static let useResourcesDir = InitHint(rawValue: 1 << 1)
-        public static let createMenuBar = InitHint(rawValue: 1 << 2)
-        public static let `default` = InitHint([.joystickHatsAsButtons, .useResourcesDir, .createMenuBar])
-    }
+public enum GLSession {    
+    public static var hints = Hints()
     
     public struct Version: Hashable, Equatable, Comparable {
         public static func < (lhs: Version, rhs: Version) -> Bool {
@@ -37,27 +27,28 @@ public enum GLSession {
         return Version(major: major.int, minor: minor.int, revision: revision.int, string: string)
     }
     
-    public static func getError() -> GLFWError {
-        GLFWError(rawValue: glfwGetError(nil)) ?? .unknown
+    public static func checkError() throws -> Void {
+        var description: UnsafePointer<CChar>?
+        let lastError = glfwGetError(&description)
+        if lastError != GLFW_NO_ERROR {
+            throw GLFWError(underlyingError: lastError, description: description)
+        }
     }
     
-    public static var errorHandler: ((GLFWError) -> Void)? {
+    public static var onReceiveError: ((GLFWError) -> Void)? {
         didSet {
-            glfwSetErrorCallback { error, description in
-                GLSession.errorHandler?(GLFWError(rawValue: error) ?? .unknown)
+            if GLSession.onReceiveError != nil {
+                glfwSetErrorCallback { error, description in
+                    GLSession.onReceiveError!(GLFWError(underlyingError: error, description: description))
+                }
+            } else {
+                glfwSetErrorCallback(nil)
             }
         }
     }
     
-    public static func initialize(hints: InitHint = .default) {
-        setHint(hints)
+    public static func initialize() {
         glfwInit()
-    }
-    
-    public static func setHint(_ hint: InitHint) {
-        glfwInitHint(Constant.joystickHatButtons, hint.contains(.joystickHatsAsButtons).int32)
-        glfwInitHint(Constant.cocoaChDirResources, hint.contains(.useResourcesDir).int32)
-        glfwInitHint(Constant.cocoaMenuBar, hint.contains(.createMenuBar).int32)
     }
     
     public static func terminate() {
@@ -76,8 +67,12 @@ public enum GLSession {
         glfwPollEvents()
     }
     
-    public static func waitEvents(timeout: Double = 0.0) {
-        timeout > 0 ? glfwWaitEventsTimeout(timeout) : glfwWaitEvents()
+    public static func waitEvents() {
+        glfwWaitEvents()
+    }
+    
+    public static func waitEvents(timeout: Double) {
+        glfwWaitEventsTimeout(timeout)
     }
     
     public static func timeout() {

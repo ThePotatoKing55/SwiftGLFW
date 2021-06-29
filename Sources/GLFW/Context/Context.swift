@@ -1,9 +1,9 @@
 import CGLFW3
 
-public class GLContext: GLObject {
+public class GLContext: GLFWObject {
     internal(set) public var pointer: OpaquePointer?
     
-    init(_ pointer: OpaquePointer?) {
+    internal init(_ pointer: OpaquePointer?) {
         self.pointer = pointer
     }
     
@@ -15,13 +15,19 @@ public class GLContext: GLObject {
         glfwMakeContextCurrent(pointer)
     }
     
-    public static func setSwapInterval<T: BinaryInteger>(to interval: T) {
-        glfwSwapInterval(interval.int32)
+    public static var syncSwapWithMonitor: Bool = false {
+        didSet {
+            glfwSwapInterval(syncSwapWithMonitor.int32)
+        }
     }
     
-    public typealias Hint = GLWindowHints.Hint
+    /*public static func setSwapInterval<T: BinaryInteger>(to interval: T) {
+        glfwSwapInterval(interval.int32)
+    }*/
     
-    private var attributes: GLWindow.AttributeManager { .init(pointer) }
+    public typealias Hint = GLFWWindowHints.Hint
+    
+    private var attributes: GLFWWindow.AttributeManager { .init(pointer) }
     
     public var clientAPI: Hint.ClientAPI {
         Hint.ClientAPI(rawValue: attributes[Constant.clientAPI]) ?? .openGL
@@ -62,7 +68,7 @@ public class GLContext: GLObject {
     }
 }
 
-extension GLWindow {
+extension GLFWWindow {
     public var context: GLContext {
         GLContext(pointer)
     }

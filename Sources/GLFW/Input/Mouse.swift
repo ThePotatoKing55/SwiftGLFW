@@ -1,15 +1,15 @@
 import CGLFW3
 
-extension GLWindow {
+extension GLFWWindow {
     public var mouse: GLMouse {
         GLMouse(in: self)
     }
 }
 
 public final class GLMouse {
-    private let window: GLWindow
+    private let window: GLFWWindow
     private var pointer: OpaquePointer? { window.pointer }
-    public init(in window: GLWindow) {
+    public init(in window: GLFWWindow) {
         self.window = window
     }
     
@@ -31,7 +31,7 @@ public final class GLMouse {
             }
         }
         
-        public func state(in window: GLWindow) -> State {
+        public func state(in window: GLFWWindow) -> State {
             State(glfwGetMouseButton(window.pointer, rawValue))
         }
         

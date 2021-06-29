@@ -1,7 +1,7 @@
 import CGLFW3
 
 @frozen
-public struct GLWindowHints: ExpressibleByArrayLiteral, IteratorProtocol, Sequence {
+public struct GLFWWindowHints: ExpressibleByArrayLiteral, IteratorProtocol, Sequence {
     
     public typealias Element = Hint
     
@@ -37,7 +37,7 @@ public struct GLWindowHints: ExpressibleByArrayLiteral, IteratorProtocol, Sequen
         array.count
     }
     
-    public static let `default` = GLWindowHints()
+    public static let `default` = GLFWWindowHints()
     
     public enum Hint: Equatable {
         case resizable(Bool)
@@ -173,7 +173,7 @@ public struct GLWindowHints: ExpressibleByArrayLiteral, IteratorProtocol, Sequen
     }
 }
 
-extension GLWindowHints: Equatable {
+extension GLFWWindowHints: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.array == rhs.array
     }

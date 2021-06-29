@@ -1,6 +1,6 @@
 import CGLFW3
 
-public final class GLMonitor: GLObject {
+public final class GLFWMonitor: GLFWObject {
     internal(set) public var pointer: OpaquePointer?
     
     public var connectionHandler: (() -> Void)?
@@ -12,22 +12,22 @@ public final class GLMonitor: GLObject {
         guard let pointer = pointer else { return }
         glfwSetMonitorUserPointer(pointer, Unmanaged.passUnretained(self).toOpaque())
         
-        func monitorObject(_ pointer: OpaquePointer?) -> GLMonitor {
+        func monitorObject(_ pointer: OpaquePointer?) -> GLFWMonitor {
             Unmanaged.fromOpaque(glfwGetMonitorUserPointer(pointer)).takeUnretainedValue()
         }
         
         glfwSetMonitorCallback {
             //let monitor = monitorObject($0)
-            let monitor = GLMonitor.fromOpaque($0)
+            let monitor = GLFWMonitor.fromOpaque($0)
             $1.bool ? monitor.connectionHandler?() : monitor.disconnectionHandler?()
         }
     }
     
-    public static func fromOpaque(_ pointer: OpaquePointer!) -> GLMonitor {
+    public static func fromOpaque(_ pointer: OpaquePointer!) -> GLFWMonitor {
         if let opaque = glfwGetMonitorUserPointer(pointer) {
             return Unmanaged.fromOpaque(opaque).takeUnretainedValue()
         } else {
-            return GLMonitor(pointer)
+            return GLFWMonitor(pointer)
         }
     }
     
@@ -36,15 +36,15 @@ public final class GLMonitor: GLObject {
         glfwSetMonitorUserPointer(pointer, nil)
     }
     
-    public static var primary: GLMonitor {
+    public static var primary: GLFWMonitor {
         .fromOpaque(glfwGetPrimaryMonitor())
     }
     
-    public static var current: [GLMonitor] {
+    public static var current: [GLFWMonitor] {
         var count = Int32.zero
         let pointer = glfwGetMonitors(&count)
         let array = Array(UnsafeBufferPointer(start: pointer, count: count.int))
-        return array.map(GLMonitor.fromOpaque(_:))
+        return array.map(GLFWMonitor.fromOpaque(_:))
     }
     
     public var name: String {

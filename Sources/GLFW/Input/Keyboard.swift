@@ -1,15 +1,15 @@
 import CGLFW3
 
-extension GLWindow {
+extension GLFWWindow {
     public var keyboard: GLKeyboard {
         GLKeyboard(in: self)
     }
 }
 
 public final class GLKeyboard {
-    private let window: GLWindow
+    private let window: GLFWWindow
     private var pointer: OpaquePointer? { window.pointer }
-    public init(in window: GLWindow) {
+    public init(in window: GLFWWindow) {
         self.window = window
     }
     
@@ -63,7 +63,7 @@ public final class GLKeyboard {
             glfwGetKeyScancode(self.rawValue).int
         }
         
-        public func state(in window: GLWindow) -> State {
+        public func state(in window: GLFWWindow) -> State {
             State(glfwGetKey(window.pointer, rawValue))
         }
         

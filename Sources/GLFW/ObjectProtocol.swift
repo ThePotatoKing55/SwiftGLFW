@@ -1,11 +1,11 @@
 import CGLFW3
 
-protocol GLObject: Equatable {
+protocol GLFWObject: Equatable {
     var pointer: OpaquePointer? { get set }
 }
 
-extension GLObject {
-    public static func == <T: GLObject>(lhs: Self, rhs: T) -> Bool {
+extension GLFWObject {
+    public static func == <T: GLFWObject>(lhs: Self, rhs: T) -> Bool {
         lhs.pointer == rhs.pointer
     }
 }
