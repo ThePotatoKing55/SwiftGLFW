@@ -27,7 +27,7 @@ public enum GLFWSession {
         return Version(major: major.int, minor: minor.int, revision: revision.int, string: string)
     }
     
-    public static func checkError() throws -> Void {
+    public static func checkError() async throws -> Void {
         var description: UnsafePointer<CChar>?
         let lastError = glfwGetError(&description)
         if lastError != GLFW_NO_ERROR {

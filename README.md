@@ -2,90 +2,143 @@
 
 A Swift library that adds a more Swifty interface to [GLFW](https://github.com/glfw/glfw). So far, I've only tested it on macOS, but it should compile and run on Windows and Linux.
 
-If you just want the pure C library, I also made [CGLFW3](https://github.com/thepotatoking55/CGLFW3), which wraps GLFW as a Swift package.
+If you just want the pure C library and bindings, I also made [CGLFW3](https://github.com/thepotatoking55/CGLFW3), which wraps GLFW as a Swift package.
 
 ## Installation
 
-Installing is pretty standard for the Swift Package Manager. Add this to your dependencies:
+Installing is pretty standard with Swift Package Manager:
 
 ```swift
-.package(url: "https://github.com/thepotatoking55/SwiftGLFW.git", .upToNextMajor(from: "3.3.4"))
+import PackageDescription
+
+let package = Package(
+    name: "GLFWSample",
+    products: [ .library(name: "TestLibrary", targets: ["TestTarget"]) ],
+    dependencies: [
+        .package(url: "https://github.com/thepotatoking55/SwiftGLFW.git", .upToNextMajor(from: "3.3.4"))
+    ],
+    targets: [
+        .target(
+            name: "TestTarget",
+            dependencies: [
+                .product(name: "GLFW", package: "SwiftGLFW")
+            ]
+        )
+    ]
+)
 ```
-    
-## How to Use
 
-### Basic Setup
+## Usage
+### Example Code
 
-Setup is pretty painless, requiring just a few lines of code:
+Here's a Swiftified version of the [example code in GLFW's C documentation](https://www.glfw.org/documentation.html#example-code) (with some error-handling additions).
 
 ```swift
 import GLFW
-
-...
+import OpenGL // Or whatever other library you use
 
 func main() {
-    GLSession.initialize()
-    
-    GLWindow.hints.add(.openGLVersion(.v4_6))
-    GLWindow.hints.add(.openGLProfile(.core))
-    GLWindow.hints.add(.openGLCompatibility(.forward))
-    
-    let window = GLWindow.create(size: GLSize(width: 860, height: 480), title: "SwiftGLFW")
-    window.context.makeCurrent()
-    
-    window.keyInputHandler = { key, scancode, state, modifiers in
-        if key == .escape && state == .pressed {
-            window.close()
+    do {
+        try GLFWSession.initialize()
+        
+        /* Create a windowed mode window and its OpenGL context */
+        let window = try GLFWWindow(width: 640, height: 480, title: "Hello World")
+        
+        /* Make the window's context current */
+        window.context.makeCurrent()
+        
+        /* Loop until the user closes the window */
+        while !window.shouldClose {
+            /* Render here */
+            glClear(GL_COLOR_BUFFER_BIT)
+            
+            /* Swap front and back buffers */
+            window.swapBuffers()
+            
+            /* Poll for and process events */
+            GLFWSession.pollInputEvents()
         }
+    } catch let error as GLFWError {
+        print(error.description ?? "Unknown error")
+        print(error.underlyingError.description)
+    } catch {
+        print(error)
     }
-    
-    while !window.shouldClose {
-        GLSession.pollInputEvents()
-        someRenderFunctionDeclaredEarlier()
-        window.swapBuffers()
-    }
-    
-    GLSession.terminate()
 }
 ```
 
 ### Error Handling
 
-While there are no direct errors thrown, you may come across some weirdness (namely, windows coming up `nil`) when something goes wrong. To check on the latest error from GLFW, call this:
+The only throwing functions you'll come across are `GLFWSession.intialize()` and `GLFWWindow.init(...)`. However, if you want to be extra careful, there's also  
 
 ```swift
-let error = GLSession.getError()
+try GLFWSession.checkError()
 ```
 
 Or, you can assign an error handler to catch them as soon as they come up:
 
 ```swift
-GLSession.errorHandler = { error in
+GLFWSession.errorHandler = { error in
     /* do something with it here */
 }
 ```
-    
+
 ### Attributes
 
-Attributes are no longer accessed or modified through functions like `glfwGetWindowAttrib()`/`glfwSetWindowAttrib()`. Instead, the library handles all of the C functions and constants to create Swifty objects. For example:
+Every GLFW object is wrapped by a Swift one, which should make the interface a lot nicer to use and read. For example, this:
     
 ```swift
-let window = GLWindow.create(...)
-window.resizable = true
-window.maxmize()
+import GLFW
+
+try! GLFWSession.initialize()
+
+guard let window = try? GLFWWindow(width: 640, height: 480, title: "Hello World") else {
+    GLFWSession.terminate()
+    return
+}
+
+window.resizable = false
+window.maximize()
 
 window.mouse.useRawMotionInput = true
 window.mouse.cursorMode = .disabled
-window.scrollInputHandler = { offset in ... }
+window.scrollInputHandler = { offset in
+    ...
+}
 
-let monitor = GLMonitor.primary
-monitor.setGamma(2.2)
+let monitor = GLFWMonitor.primary
+monitor.setGamma(1.0)
 ```
 
-### Gamepad Support
+is equivalent to this:
 
-GLFW supports gamepads, so this does too!
+```c++
+#include <GLFW/glfw3.h>
 
-```swift
-let movementSpeed = GLGamepad[0]?.input.thumbstick.left.y ?? 0.0
+GLFWwindow* window;
+
+if !(glfwInit())
+    return -1;
+
+window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+if !(window) {
+    glfwTerminate();
+    return -1;
+}
+
+glfwSetWindowAttrib(window, GLFW_RESIZABLE, GLFW_FALSE);
+glfwMaximizeWindow(window);
+
+if (glfwRawMouseMotionSupported())
+    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    
+glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    ...
+}
+
+glfwSetScrollCallback(window, scroll_callback);
+
+GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+glfwSetGamma(monitor, 1.0);
 ```
