@@ -31,7 +31,7 @@ public enum GLFWSession {
         var description: UnsafePointer<CChar>?
         let lastError = glfwGetError(&description)
         if lastError != GLFW_NO_ERROR {
-            throw GLFWError(underlyingError: lastError, description: description)
+            throw GLFWError(kind: lastError, description: description)
         }
     }
     
@@ -39,7 +39,7 @@ public enum GLFWSession {
         didSet {
             if GLFWSession.onReceiveError != nil {
                 glfwSetErrorCallback { error, description in
-                    GLFWSession.onReceiveError!(GLFWError(underlyingError: error, description: description))
+                    GLFWSession.onReceiveError!(GLFWError(kind: error, description: description))
                 }
             } else {
                 glfwSetErrorCallback(nil)
