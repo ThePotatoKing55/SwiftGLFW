@@ -41,17 +41,20 @@ extension GLFWWindow {
         }
         
         @propertyWrapper public struct BoolHint {
-            public var wrappedValue: Bool? = nil {
-                didSet {
-                    guard let wrappedValue = wrappedValue else { return }
-                    glfwWindowHint(hintName, wrappedValue.int32)
+            private var _value: Bool? = nil
+            
+            public var wrappedValue: Bool? {
+                get { _value }
+                set {
+                    guard let value = _value?.int32 else { return }
+                    glfwWindowHint(hintName, value)
                 }
             }
             
             private let hintName: Int32
             
             fileprivate init(wrappedValue: Bool? = nil, _ hintName: Int32) {
-                self.wrappedValue = wrappedValue
+                self._value = wrappedValue
                 self.hintName = hintName
             }
         }
@@ -61,8 +64,7 @@ extension GLFWWindow {
                 get { return getter() }
                 set {
                     setter(newValue)
-                    guard let int = self.int else { return }
-                    glfwWindowHint(hintName, int.int32)
+                    glfwWindowHint(hintName, self.int!.int32)
                 }
             }
             
