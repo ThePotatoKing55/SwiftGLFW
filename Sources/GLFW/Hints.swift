@@ -59,47 +59,34 @@ extension GLFWWindow {
             }
         }
         
-        @propertyWrapper public struct IntHint<Value> {
+        @propertyWrapper public struct IntHint<Value: BinaryInteger> {
             public var wrappedValue: Value? {
-                get { return getter() }
-                set {
-                    setter(newValue)
-                    glfwWindowHint(hintName, self.int!.int32)
+                didSet {
+                    wrappedValue.flatMap { glfwWindowHint(hintName, $0.int32) }
                 }
             }
             
-            private func getter() -> Value? where Value: BinaryInteger {
-                return int.flatMap(Value.init)
+            fileprivate init(wrappedValue: Value? = nil, _ hint: Int32) {
+                self.wrappedValue = wrappedValue
+                self.hintName = hint
             }
-            
-            private func getter() -> Value? where Value: RawRepresentable, Value.RawValue: BinaryInteger {
-                return int.flatMap { Value(rawValue: Value.RawValue($0)) }
-            }
-            
-            private func getter() -> Value? { nil }
-            
-            private mutating func setter(_ newValue: Value?) where Value: BinaryInteger {
-                int = newValue.flatMap(Int.init)
-            }
-            
-            private mutating func setter(_ newValue: Value?) where Value: RawRepresentable, Value.RawValue: BinaryInteger {
-                int = (newValue?.rawValue).flatMap(Int.init)
-            }
-            
-            private mutating func setter(_ newValue: Value?) {}
             
             private let hintName: Int32
-            private var int: Int?
+        }
+        
+        @propertyWrapper public struct RawHint<Value: RawRepresentable> where Value.RawValue: BinaryInteger {
+            public var wrappedValue: Value? {
+                didSet {
+                    wrappedValue.flatMap { glfwWindowHint(hintName, $0.rawValue.int32) }
+                }
+            }
             
-            fileprivate init(wrappedValue: Value? = nil, _ hint: Int32) where Value: BinaryInteger {
-                self.int = wrappedValue.flatMap(Int.init)
+            fileprivate init(wrappedValue: Value? = nil, _ hint: Int32) {
+                self.wrappedValue = wrappedValue
                 self.hintName = hint
             }
             
-            fileprivate init(wrappedValue: Value? = nil, _ hint: Int32) where Value: RawRepresentable, Value.RawValue: BinaryInteger {
-                self.int = (wrappedValue?.rawValue).flatMap(Int.init)
-                self.hintName = hint
-            }
+            private let hintName: Int32
         }
         
         @propertyWrapper public struct StringHint {
@@ -182,14 +169,14 @@ extension GLFWWindow {
             case openGL = 0x00030001, embeddedOpenGL
         }
         
-        @IntHint(Constant.clientAPI)
+        @RawHint(Constant.clientAPI)
         public var clientAPI: ClientAPI? = .openGL
         
         public enum ContextCreationAPI: Int32 {
             case native = 0x00036001, egl, osMesa
         }
         
-        @IntHint(Constant.contextCreationAPI)
+        @RawHint(Constant.contextCreationAPI)
         public var contextCreationAPI: ContextCreationAPI?
         
         public enum OpenGLCompatibility: Int32 {
@@ -238,7 +225,7 @@ extension GLFWWindow {
             }
         }
         
-        @IntHint(Constant.openglForwardCompatibility)
+        @RawHint(Constant.openglForwardCompatibility)
         public var openglCompatibility: OpenGLCompatibility?
         
         public enum OpenGLProfile: Int32 {
@@ -248,21 +235,21 @@ extension GLFWWindow {
         @BoolHint(Constant.openglDebugContext)
         public var openglDebugMode: Bool?
         
-        @IntHint(Constant.openglProfile)
+        @RawHint(Constant.openglProfile)
         public var openglProfile: OpenGLProfile?
         
         public enum Robustness: Int32 {
             case noResetNotification = 0x00031001, loseContext
         }
         
-        @IntHint(Constant.contextRobustness)
+        @RawHint(Constant.contextRobustness)
         public var robustness: Robustness?
         
         public enum ReleaseBehavior: Int32 {
             case any = 0, flushPipeline = 0x00035001, none
         }
         
-        @IntHint(Constant.contextReleaseBehavior)
+        @RawHint(Constant.contextReleaseBehavior)
         public var releaseBehavior: ReleaseBehavior?
         
         @BoolHint(Constant.contextSuppressErrors)
