@@ -166,6 +166,7 @@ extension GLFWWindow {
         public var refreshRate: Int?
         
         public enum ClientAPI: Int32 {
+            case none = 0
             case openGL = 0x00030001, embeddedOpenGL
         }
         

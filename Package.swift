@@ -11,6 +11,7 @@ let package = Package(
         .package(url: "https://github.com/thepotatoking55/CGLFW3.git", .branch("main"))
     ],
     targets: [
+        //.systemLibrary(name: "CGLFW3", pkgConfig: "glfw3"),
         .target(name: "GLFW", dependencies: ["CGLFW3"])
     ]
 )
