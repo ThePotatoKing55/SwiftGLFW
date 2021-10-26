@@ -1,6 +1,6 @@
 import CGLFW3
 
-public final class GLFWMonitor: GLFWObject {
+public final class Monitor: GLFWObject {
     internal(set) public var pointer: OpaquePointer?
     
     public var connectionHandler: (() -> Void)?
@@ -12,22 +12,21 @@ public final class GLFWMonitor: GLFWObject {
         guard let pointer = pointer else { return }
         glfwSetMonitorUserPointer(pointer, Unmanaged.passUnretained(self).toOpaque())
         
-        func monitorObject(_ pointer: OpaquePointer?) -> GLFWMonitor {
+        func monitorObject(_ pointer: OpaquePointer?) -> Monitor {
             Unmanaged.fromOpaque(glfwGetMonitorUserPointer(pointer)).takeUnretainedValue()
         }
         
         glfwSetMonitorCallback {
-            //let monitor = monitorObject($0)
-            let monitor = GLFWMonitor.fromOpaque($0)
+            let monitor = Monitor.fromOpaque($0)
             $1.bool ? monitor.connectionHandler?() : monitor.disconnectionHandler?()
         }
     }
     
-    public static func fromOpaque(_ pointer: OpaquePointer!) -> GLFWMonitor {
+    public static func fromOpaque(_ pointer: OpaquePointer!) -> Monitor {
         if let opaque = glfwGetMonitorUserPointer(pointer) {
             return Unmanaged.fromOpaque(opaque).takeUnretainedValue()
         } else {
-            return GLFWMonitor(pointer)
+            return Monitor(pointer)
         }
     }
     
@@ -36,54 +35,54 @@ public final class GLFWMonitor: GLFWObject {
         glfwSetMonitorUserPointer(pointer, nil)
     }
     
-    public static var primary: GLFWMonitor {
+    public static var primary: Monitor {
         .fromOpaque(glfwGetPrimaryMonitor())
     }
     
-    public static var current: [GLFWMonitor] {
+    public static var current: [Monitor] {
         var count = Int32.zero
         let pointer = glfwGetMonitors(&count)
         let array = Array(UnsafeBufferPointer(start: pointer, count: count.int))
-        return array.map(GLFWMonitor.fromOpaque(_:))
+        return array.map(Monitor.fromOpaque(_:))
     }
     
     public var name: String {
         String(cString: glfwGetMonitorName(pointer))
     }
     
-    public var virtualPosition: GLFWPoint<Int> {
+    public var virtualPosition: DiscretePoint {
         var x = Int32.zero, y = Int32.zero
         glfwGetMonitorPos(pointer, &x, &y)
-        return GLFWPoint(x: x.int, y: y.int)
+        return DiscretePoint(x: x.int, y: y.int)
     }
     
-    public typealias GLSizeMM = GLFWSize<Int>
+    public typealias SizeInMillimeters = DiscreteSize
     
-    public var physicalSize: GLSizeMM {
+    public var physicalSize: SizeInMillimeters {
         var width = Int32.zero, height = Int32.zero
         glfwGetMonitorPhysicalSize(pointer, &width, &height)
-        return GLSizeMM(width: width.int, height: height.int)
+        return SizeInMillimeters(width: width.int, height: height.int)
     }
     
-    public var contentScale: GLFWContentScale {
+    public var contentScale: ContentScale {
         var xscale = Float.zero, yscale = Float.zero
         glfwGetMonitorContentScale(pointer, &xscale, &yscale)
-        return GLFWContentScale(xscale: xscale, yscale: yscale)
+        return ContentScale(x: Double(xscale), y: Double(yscale))
     }
     
-    public var workArea: GLFWFrame<Int> {
+    public var workArea: DiscreteFrame {
         var x = Int32.zero, y = Int32.zero, width = Int32.zero, height = Int32.zero
         glfwGetMonitorWorkarea(pointer, &x, &y, &width, &height)
-        return GLFWFrame(x: x.int, y: y.int, width: width.int, height: height.int)
+        return DiscreteFrame(x: x.int, y: y.int, width: width.int, height: height.int)
     }
     
     public struct VideoMode: Equatable, Codable, Hashable {
         public var redBitDepth, greenBitDepth, blueBitDepth: Int
-        public var size: GLFWSize<Int>
+        public var size: DiscreteSize
         public var refreshRate: Int
         internal init(_ vidMode: GLFWvidmode) {
             (redBitDepth, greenBitDepth, blueBitDepth) = (vidMode.redBits.int, vidMode.greenBits.int, vidMode.blueBits.int)
-            size = [vidMode.width.int, vidMode.height.int]
+            size = DiscreteSize(vidMode.width.int, vidMode.height.int)
             refreshRate = vidMode.refreshRate.int
         }
     }

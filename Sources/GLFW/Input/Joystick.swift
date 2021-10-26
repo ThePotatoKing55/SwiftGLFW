@@ -1,51 +1,46 @@
 import CGLFW3
 
-public struct GLFWJoystick: Hashable, Codable, Equatable {
-    public static subscript(id: ID) -> GLFWJoystick? {
+public struct Joystick: Hashable, Codable, Equatable {
+    public static subscript(id: ID) -> Joystick? {
         get {
-            if glfwJoystickPresent(id.rawValue) == true {
-                return GLFWJoystick(joystickID: id)
+            if glfwJoystickPresent(id.rawValue + GLFW_JOYSTICK_1) == true {
+                return Joystick(id: id)
             } else {
                 return nil
             }
         }
     }
     
-    public enum ID: Int32, Codable, Hashable, Equatable, ExpressibleByIntegerLiteral {
-        case joystick1, joystick2, joystick3, joystick4, joystick5, joystick6, joystick7, joystick8, joystick9, joystick10, joystick11, joystick12, joystick13, joystick14, joystick15, joystick16, unknown = -1
+    public enum ID: Int32, Codable, Hashable, Equatable {
+        case joystick1, joystick2, joystick3, joystick4, joystick5, joystick6, joystick7, joystick8, joystick9, joystick10, joystick11, joystick12, joystick13, joystick14, joystick15, joystick16
         public static let last = joystick16
-        public init(integerLiteral value: Int32) {
-            self = Self(rawValue: value) ?? .unknown
-        }
     }
     
-    public var joystickID: ID
+    public static var connectedJoysticks: [Joystick] {
+        return (0...15).compactMap { Joystick[ID(rawValue: $0)!] }
+    }
+    
+    public let id: ID
     
     public var name: String {
-        return String(cString: glfwGetJoystickName(joystickID.rawValue))
+        return String(cString: glfwGetJoystickName(id.rawValue))
     }
     
     public var axes: [Float] {
         var count = Int32.zero
-        let pointer = glfwGetJoystickAxes(joystickID.rawValue, &count)
+        let pointer = glfwGetJoystickAxes(id.rawValue, &count)
         return Array(UnsafeBufferPointer(start: pointer, count: count.int))
     }
     
-    public enum ButtonState: Int32 {
-        case released, pressed, unknown = -1
-        public init(_ rawValue: Int32) {
-            self = Self(rawValue: rawValue) ?? .unknown
-        }
-    }
-    
-    public var buttonStates: [ButtonState] {
+    public var buttons: [ButtonState] {
         var count = Int32.zero
-        let pointer = glfwGetJoystickButtons(joystickID.rawValue, &count)
-        return Array(UnsafeBufferPointer(start: pointer, count: count.int)).map(\.int32).map(ButtonState.init)
+        let pointer = glfwGetJoystickButtons(id.rawValue, &count)
+        let buffer = UnsafeBufferPointer(start: pointer, count: count.int)
+        return Array(buffer).map { ButtonState(Int($0)) }
     }
     
     public var guid: String {
-        return String(cString: glfwGetJoystickGUID(joystickID.rawValue))
+        return String(cString: glfwGetJoystickGUID(id.rawValue))
     }
     
     public struct HatState: OptionSet {
@@ -67,7 +62,7 @@ public struct GLFWJoystick: Hashable, Codable, Equatable {
     
     public var hatStates: [HatState] {
         var count = Int32.zero
-        let pointer = glfwGetJoystickHats(joystickID.rawValue, &count)
+        let pointer = glfwGetJoystickHats(id.rawValue, &count)
         return Array(UnsafeBufferPointer(start: pointer, count: count.int)).map(HatState.init)
     }
 }

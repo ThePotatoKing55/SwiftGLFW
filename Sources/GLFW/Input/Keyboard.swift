@@ -1,35 +1,30 @@
 import CGLFW3
 
 extension GLFWWindow {
-    public var keyboard: GLFWKeyboard {
-        GLFWKeyboard(in: self)
+    public var keyboard: Keyboard {
+        Keyboard(in: self)
     }
 }
 
-public final class GLFWKeyboard {
+public final class Keyboard {
     private let window: GLFWWindow
-    private var pointer: OpaquePointer? { window.pointer }
-    public init(in window: GLFWWindow) {
+    
+    init(in window: GLFWWindow) {
         self.window = window
     }
     
     public var stickyKeys: Bool {
-        get { glfwGetInputMode(pointer, Constant.stickyKeys).bool }
-        set { glfwSetInputMode(pointer, Constant.stickyKeys, newValue.int32) }
+        get { glfwGetInputMode(window.pointer, Constant.stickyKeys).bool }
+        set { glfwSetInputMode(window.pointer, Constant.stickyKeys, newValue.int32) }
     }
     
     public var sendLocksAsKeyMods: Bool {
-        get { glfwGetInputMode(pointer, Constant.lockKeyMods).bool }
-        set { glfwSetInputMode(pointer, Constant.lockKeyMods, newValue.int32) }
+        get { glfwGetInputMode(window.pointer, Constant.lockKeyMods).bool }
+        set { glfwSetInputMode(window.pointer, Constant.lockKeyMods, newValue.int32) }
     }
     
     public enum Key: Int32 {
-        public enum State: Int32 {
-            case released, pressed, repeated, unknown = -1
-            public init(_ rawValue: Int32) {
-                self = Self(rawValue: rawValue) ?? .unknown
-            }
-        }
+        public typealias State = ButtonState
         
         case unknown = -1
         case space = 32
@@ -53,6 +48,7 @@ public final class GLFWKeyboard {
         
         case leftShift = 340, leftControl, leftAlt, leftSuper
         case rightShift, rightControl, rightAlt, rightSuper
+        
         public static let (leftCommand, rightCommand) = (leftSuper, rightSuper)
         public static let (leftWin, rightWin) = (leftSuper, rightSuper)
         
@@ -64,7 +60,7 @@ public final class GLFWKeyboard {
         }
         
         public func state(in window: GLFWWindow) -> State {
-            State(glfwGetKey(window.pointer, rawValue))
+            State(Int(glfwGetKey(window.pointer, rawValue)))
         }
         
         public var name: String? {

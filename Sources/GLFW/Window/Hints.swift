@@ -186,7 +186,7 @@ extension GLFWWindow {
         
         public struct OpenGLVersion: Equatable {
             public let major, minor: Int
-            private init(major: Int, minor: Int) {
+            internal init(major: Int, minor: Int) {
                 (self.major, self.minor) = (major, minor)
             }
             

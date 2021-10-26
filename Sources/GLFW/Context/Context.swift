@@ -21,50 +21,46 @@ public class GLFWContext: GLFWObject {
         }
     }
     
-    /*public static func setSwapInterval<T: BinaryInteger>(to interval: T) {
-        glfwSwapInterval(interval.int32)
-    }*/
-    
-    public typealias Hint = GLFWWindowHints.Hint
-    
     private var attributes: GLFWWindow.AttributeManager { .init(pointer) }
     
-    public var clientAPI: Hint.ClientAPI {
-        Hint.ClientAPI(rawValue: attributes[Constant.clientAPI]) ?? .openGL
+    public typealias Hints = GLFWWindow.Hints
+    
+    public var clientAPI: Hints.ClientAPI {
+        return .init(rawValue: attributes[Constant.clientAPI]) ?? .openGL
     }
     
-    public var creationAPI: Hint.ContextCreationAPI {
-        Hint.ContextCreationAPI(rawValue: attributes[Constant.contextCreationAPI]) ?? .native
+    public var creationAPI: Hints.ContextCreationAPI {
+        return .init(rawValue: attributes[Constant.contextCreationAPI]) ?? .native
     }
     
-    public var openGLVersion: Hint.OpenGLVersion {
+    public var openGLVersion: Hints.OpenGLVersion {
         let major = attributes[Constant.contextVersionMajor].int
         let minor = attributes[Constant.contextVersionMinor].int
-        return Hint.OpenGLVersion(major: major, minor: minor)
+        return .init(major: major, minor: minor)
     }
     
-    public var openglCompatibility: Hint.OpenGLCompatibility {
-        Hint.OpenGLCompatibility(rawValue: attributes[Constant.openglForwardCompatibility]) ?? .backwards
+    public var openglCompatibility: Hints.OpenGLCompatibility {
+        return .init(rawValue: attributes[Constant.openglForwardCompatibility]) ?? .backwards
     }
     
     public var debugMode: Bool {
         attributes[Constant.openglDebugContext].bool
     }
     
-    public var openglProfile: Hint.OpenGLProfile {
-        Hint.OpenGLProfile(rawValue: attributes[Constant.openglProfile]) ?? .any
+    public var openglProfile: Hints.OpenGLProfile {
+        return .init(rawValue: attributes[Constant.openglProfile]) ?? .any
     }
     
-    public var releaseBehavior: Hint.ReleaseBehavior {
-        Hint.ReleaseBehavior(rawValue: attributes[Constant.contextReleaseBehavior]) ?? .any
+    public var releaseBehavior: Hints.ReleaseBehavior {
+        return .init(rawValue: attributes[Constant.contextReleaseBehavior]) ?? .any
     }
     
     public var suppressErrors: Bool {
-        attributes[Constant.contextSuppressErrors].bool
+        return attributes[Constant.contextSuppressErrors].bool
     }
     
-    public var robustness: Hint.Robustness {
-        Hint.Robustness(rawValue: attributes[Constant.contextRobustness]) ?? .none
+    public var robustness: Hints.Robustness {
+        return .init(rawValue: attributes[Constant.contextRobustness]) ?? .loseContext
     }
 }
 
