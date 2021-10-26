@@ -3,4 +3,3 @@ module CGLFW3 [system] {
     link "glfw"
     export *
 }
-
