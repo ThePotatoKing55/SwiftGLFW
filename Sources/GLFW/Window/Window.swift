@@ -295,7 +295,7 @@ public final class GLFWWindow: GLFWObject {
     
     public convenience init(width: Int, height: Int, title: String = "Window", fullscreenMonitor monitor: Monitor? = nil, sharedContext context: GLFWContext? = nil) throws {
         let pointer = glfwCreateWindow(width.int32, height.int32, title, monitor?.pointer, context?.pointer)
-        try GLFWSession.checkError()
+        try GLFWSession.checkForError()
         self.init(pointer)
         self.title = title
     }

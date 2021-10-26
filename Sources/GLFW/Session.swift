@@ -27,7 +27,7 @@ public enum GLFWSession {
         return Version(major: major.int, minor: minor.int, revision: revision.int, string: string)
     }
     
-    public static func checkError() throws -> Void {
+    public static func checkForError() throws -> Void {
         var description: UnsafePointer<CChar>?
         let lastError = glfwGetError(&description)
         if lastError != GLFW_NO_ERROR {
@@ -48,8 +48,9 @@ public enum GLFWSession {
     }
     
     public static func initialize() throws {
-        if glfwInit() != 1 {
-            try checkError()
+        if glfwInit() != GLFW_TRUE {
+            try checkForError()
+            throw GLFWError(kind: .unknown, description: "GLFW init failed, but no error was thrown.")
         }
     }
     
