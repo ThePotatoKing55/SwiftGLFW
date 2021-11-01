@@ -7,13 +7,7 @@ This package is based on [CGLFW3](https://github.com/thepotatoking55/CGLFW3), wh
 ## Setting Up
 
 
-For now, SwiftGLFW relies on GLFW being installed through Homebrew. Just run
-
-```bash
-brew install glfw3
-```
-
-in the Terminal. Once GLFW is installed, adding SwiftGLFW to your project is pretty standard for a Swift Package.
+Adding this to your project is pretty standard for a Swift Package.
 
 ```swift
 import PackageDescription
@@ -24,7 +18,7 @@ let package = Package(
         .executable(name: "GLFW Sample", targets: ["GLFWSample"])
     ],
     dependencies: [
-        .package(url: "https://github.com/thepotatoking55/SwiftGLFW.git", .upToNextMajor(from: "v4.0.0"))
+        .package(url: "https://github.com/thepotatoking55/SwiftGLFW.git", .upToNextMajor(from: "v4.1.0"))
     ],
     targets: [
         .executableTarget(
@@ -51,12 +45,12 @@ func main() {
         try GLFWSession.initialize()
         
         /* macOS's OpenGL implementation requires some extra tweaking */
-        Window.hints.openglVersion = .v4_1
-        Window.hints.openglProfile = .core
-        Window.hints.openglCompatibility = .forward
+        GLFWWindow.hints.openglVersion = .v4_1
+        GLFWWindow.hints.openglProfile = .core
+        GLFWWindow.hints.openglCompatibility = .forward
         
         /* Create a windowed mode window and its OpenGL context */
-        let window = try Window(width: 640, height: 480, title: "Hello World")
+        let window = try GLFWWindow(width: 640, height: 480, title: "Hello World")
         
         /* Make the window's context current */
         window.context.makeCurrent()
@@ -84,7 +78,7 @@ func main() {
 
 ### Error Handling
 
-Since they're fundamental to GLFW, `GLFWSession.initialize` and `Window.init` can both throw errors. However, if you're expecting potential errors in other places, you can also call
+Since they're fundamental to GLFW, `GLFWSession.initialize` and `GLFWWindow.init` can both throw errors. However, if you're expecting potential errors in other places, you can also call
 
 ```swift
 try GLFWSession.checkForError()
@@ -127,7 +121,7 @@ monitor.setGamma(1.0)
 
 Is equivalent to this:
 
-```c++
+```c
 #include <GLFW/glfw3.h>
 
 GLFWwindow* window;
