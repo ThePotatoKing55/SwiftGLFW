@@ -1,5 +1,8 @@
 import CGLFW3
 
+@available(*, renamed: "Monitor")
+public final class GLFWMonitor {}
+
 public final class Monitor: GLFWObject {
     internal(set) public var pointer: OpaquePointer?
     
@@ -103,10 +106,10 @@ public final class Monitor: GLFWObject {
     }
     
     public struct GammaRamp {
-        fileprivate var size: GLuint { GLuint(stops.count) }
-        fileprivate var red: [GLushort] { stops.map(\.red).map(GLushort.init(_:)) }
-        fileprivate var green: [GLushort] { stops.map(\.green).map(GLushort.init(_:)) }
-        fileprivate var blue: [GLushort] { stops.map(\.blue).map(GLushort.init(_:)) }
+        fileprivate var size: CUnsignedInt { CUnsignedInt(stops.count) }
+        fileprivate var red: [CUnsignedShort] { stops.map(\.red).map(CUnsignedShort.init(_:)) }
+        fileprivate var green: [CUnsignedShort] { stops.map(\.green).map(CUnsignedShort.init(_:)) }
+        fileprivate var blue: [CUnsignedShort] { stops.map(\.blue).map(CUnsignedShort.init(_:)) }
         public var stops: [GammaStop]
     }
     
@@ -123,11 +126,11 @@ public final class Monitor: GLFWObject {
             }))
         }
         set {
-            let red = UnsafeMutablePointer<GLushort>.allocate(capacity: newValue.stops.count)
+            let red = UnsafeMutablePointer<CUnsignedShort>.allocate(capacity: newValue.stops.count)
             red.assign(from: newValue.red, count: newValue.stops.count)
-            let green = UnsafeMutablePointer<GLushort>.allocate(capacity: newValue.stops.count)
+            let green = UnsafeMutablePointer<CUnsignedShort>.allocate(capacity: newValue.stops.count)
             green.assign(from: newValue.green, count: newValue.stops.count)
-            let blue = UnsafeMutablePointer<GLushort>.allocate(capacity: newValue.stops.count)
+            let blue = UnsafeMutablePointer<CUnsignedShort>.allocate(capacity: newValue.stops.count)
             blue.assign(from: newValue.blue, count: newValue.stops.count)
             var ramp = GLFWgammaramp(red: red, green: green, blue: blue, size: newValue.size)
             glfwSetGammaRamp(pointer, &ramp)

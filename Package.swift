@@ -1,29 +1,45 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 
 import PackageDescription
+
+let defines: [SwiftSetting] = [
+    /* When this fork https://github.com/thisistherk/glfw is merged into main */
+    .define("GLFW_METAL_LAYER_SUPPORT")
+]
 
 let package = Package(
     name: "SwiftGLFW",
     products: [
-        .library(name: "GLFW", targets: ["GLFW"]),
-        .library(name: "CGLFW", targets: ["CGLFW3"])
+        .library(name: "GLFW", targets: ["GLFW"])
+    ],
+    dependencies: [
+        .package(name: "CGLFW3", path: "Dependencies/CGLFW3")
     ],
     targets: [
-        .systemLibrary(
+        /*.target(
             name: "CGLFW3",
-            pkgConfig: "glfw3",
-            providers: [
-                .brew(["glfw3"])
+            exclude: ["libmac", "LICENSE.md"],
+            publicHeadersPath: "include",
+            cSettings: [
+                .headerSearchPath("include")
+            ],
+            linkerSettings: [
+                //.linkedFramework(":Sources/CGLFW3/libmac/libglfw3.a", .when(platforms: [.macOS]))
+                //.linkedLibrary(":Sources/CGLFW3/libmac/libglfw3.a", .when(platforms: [.macOS]))
+                .unsafeFlags(["-LSources/CGLFW3/libmac"], .when(platforms: [.macOS]))
             ]
-        ),
+        ),*/
         .target(
-            name: "GLFW", dependencies: ["CGLFW3"], cSettings: [
+            name: "GLFW", dependencies: ["CGLFW3"],
+            cSettings: [
                 .define("GLFW_EXPOSE_NATIVE_WIN32", .when(platforms: [.windows])),
                 .define("GLFW_EXPOSE_NATIVE_COCOA", .when(platforms: [.macOS])),
                 .define("GLFW_EXPOSE_NATIVE_NSGL", .when(platforms: [.macOS])),
+                //.define("GL_SILENCE_DEPRECATION", .when(platforms: [.macOS])),
                 .define("GLFW_EXPOSE_NATIVE_WAYLAND", .when(platforms: [.linux]))
-            ]
+            ],
+            swiftSettings: defines
         ),
-        .testTarget(name: "GLFWTests", dependencies: ["GLFW"])
+        .testTarget(name: "GLFWTests", dependencies: ["GLFW"], swiftSettings: defines)
     ]
 )

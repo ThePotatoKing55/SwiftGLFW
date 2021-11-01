@@ -1,3 +1,6 @@
+@available(*, renamed: "DiscreteSize")
+public struct GLFWSize<Scalar: SIMDScalar> {}
+
 public struct DiscreteSize: Equatable, Hashable, Codable {
     public var width: Int
     public var height: Int

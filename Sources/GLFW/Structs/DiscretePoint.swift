@@ -1,3 +1,6 @@
+@available(*, renamed: "Point")
+public struct GLFWPoint<Scalar: SIMDScalar> {}
+
 public struct DiscretePoint: Equatable, Hashable, Codable {
     public var x: Int
     public var y: Int

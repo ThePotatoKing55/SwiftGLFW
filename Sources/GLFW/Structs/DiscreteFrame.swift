@@ -1,3 +1,6 @@
+@available(*, renamed: "DiscreteFrame")
+public struct GLFWFrame<Scalar: SIMDScalar> {}
+
 public struct DiscreteFrame: Equatable, Hashable, Codable {
     public var origin: DiscretePoint
     public var size: DiscreteSize

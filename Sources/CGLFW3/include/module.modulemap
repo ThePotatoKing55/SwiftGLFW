@@ -1,0 +1,5 @@
+module CGLFW3 [system] {
+    umbrella "GLFW"
+    link "glfw3"
+    export *
+}

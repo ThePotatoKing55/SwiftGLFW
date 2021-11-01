@@ -1,3 +1,6 @@
+@available(*, renamed: "ContentScale")
+public struct GLFWContentScale {}
+
 public struct ContentScale: Equatable, Hashable, Codable {
     public var x: Double
     public var y: Double

@@ -23,6 +23,12 @@ class GLFWTests: XCTestCase {
         window?.context.makeCurrent()
         XCTAssertNotNil(window?.nsWindow)
         XCTAssertNotNil(window?.nsOpenGLContext)
+        
+        #if GLFW_METAL_LAYER_SUPPORT
+        XCTAssertNotNil(window?.metalLayer)
+        #else
+        print("GLFW_METAL_LAYER_SUPPORT not defined; skipping test")
+        #endif
     }
     
     override class func tearDown() {

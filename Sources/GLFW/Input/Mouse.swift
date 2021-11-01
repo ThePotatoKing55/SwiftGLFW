@@ -6,6 +6,9 @@ extension GLFWWindow {
     }
 }
 
+@available(*, renamed: "Mouse")
+public final class GLFWMouse {}
+
 public final class Mouse {
     private let window: GLFWWindow
     private var pointer: OpaquePointer? { window.pointer }

@@ -6,6 +6,9 @@ extension GLFWWindow {
     }
 }
 
+@available(*, renamed: "Keyboard")
+public final class GLFWKeyboard {}
+
 public final class Keyboard {
     private let window: GLFWWindow
     

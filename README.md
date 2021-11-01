@@ -6,6 +6,7 @@ This package is based on [CGLFW3](https://github.com/thepotatoking55/CGLFW3), wh
 
 ## Setting Up
 
+
 For now, SwiftGLFW relies on GLFW being installed through Homebrew. Just run
 
 ```bash

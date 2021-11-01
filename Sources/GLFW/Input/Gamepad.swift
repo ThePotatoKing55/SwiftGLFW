@@ -1,5 +1,8 @@
 import CGLFW3
 
+@available(*, renamed: "Gamepad")
+public struct GLFWGamepad {}
+
 public struct Gamepad: Hashable, Codable, Equatable {
     public static subscript(id: ID) -> Gamepad? {
         get {

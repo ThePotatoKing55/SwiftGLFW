@@ -1,5 +1,8 @@
 import CGLFW3
 
+@available(*, renamed: "Joystick")
+public struct GLFWJoystick {}
+
 public struct Joystick: Hashable, Codable, Equatable {
     public static subscript(id: ID) -> Joystick? {
         get {
