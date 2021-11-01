@@ -1,4 +1,4 @@
-@available(*, renamed: "DiscreteSize")
+@available(*, unavailable, renamed: "DiscreteSize")
 public struct GLFWSize<Scalar: SIMDScalar> {}
 
 public struct DiscreteSize: Equatable, Hashable, Codable {
