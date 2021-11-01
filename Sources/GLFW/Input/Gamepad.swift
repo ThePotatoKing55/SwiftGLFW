@@ -1,6 +1,6 @@
 import CGLFW3
 
-@available(*, renamed: "Gamepad")
+@available(*, unavailable, renamed: "Gamepad")
 public struct GLFWGamepad {}
 
 public struct Gamepad: Hashable, Codable, Equatable {

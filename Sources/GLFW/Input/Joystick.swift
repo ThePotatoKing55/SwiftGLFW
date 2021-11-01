@@ -1,6 +1,6 @@
 import CGLFW3
 
-@available(*, renamed: "Joystick")
+@available(*, unavailable, renamed: "Joystick")
 public struct GLFWJoystick {}
 
 public struct Joystick: Hashable, Codable, Equatable {

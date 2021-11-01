@@ -1,4 +1,4 @@
-@available(*, renamed: "ContentScale")
+@available(*, unavailable, renamed: "ContentScale")
 public struct GLFWContentScale {}
 
 public struct ContentScale: Equatable, Hashable, Codable {

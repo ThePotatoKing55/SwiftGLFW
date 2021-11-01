@@ -16,19 +16,6 @@ let package = Package(
         .package(name: "CGLFW3", path: "Dependencies/CGLFW3")
     ],
     targets: [
-        /*.target(
-            name: "CGLFW3",
-            exclude: ["libmac", "LICENSE.md"],
-            publicHeadersPath: "include",
-            cSettings: [
-                .headerSearchPath("include")
-            ],
-            linkerSettings: [
-                //.linkedFramework(":Sources/CGLFW3/libmac/libglfw3.a", .when(platforms: [.macOS]))
-                //.linkedLibrary(":Sources/CGLFW3/libmac/libglfw3.a", .when(platforms: [.macOS]))
-                .unsafeFlags(["-LSources/CGLFW3/libmac"], .when(platforms: [.macOS]))
-            ]
-        ),*/
         .target(
             name: "GLFW", dependencies: ["CGLFW3"],
             cSettings: [

@@ -1,4 +1,4 @@
-@available(*, renamed: "DiscreteFrame")
+@available(*, unavailable, renamed: "DiscreteFrame")
 public struct GLFWFrame<Scalar: SIMDScalar> {}
 
 public struct DiscreteFrame: Equatable, Hashable, Codable {

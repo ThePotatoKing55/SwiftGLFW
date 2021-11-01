@@ -6,7 +6,7 @@ extension GLFWWindow {
     }
 }
 
-@available(*, renamed: "Mouse")
+@available(*, unavailable, renamed: "Mouse")
 public final class GLFWMouse {}
 
 public final class Mouse {

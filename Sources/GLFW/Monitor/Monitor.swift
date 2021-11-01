@@ -1,6 +1,6 @@
 import CGLFW3
 
-@available(*, renamed: "Monitor")
+@available(*, unavailable, renamed: "Monitor")
 public final class GLFWMonitor {}
 
 public final class Monitor: GLFWObject {

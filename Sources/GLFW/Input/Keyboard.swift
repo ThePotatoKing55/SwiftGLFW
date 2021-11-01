@@ -6,7 +6,7 @@ extension GLFWWindow {
     }
 }
 
-@available(*, renamed: "Keyboard")
+@available(*, unavailable, renamed: "Keyboard")
 public final class GLFWKeyboard {}
 
 public final class Keyboard {
