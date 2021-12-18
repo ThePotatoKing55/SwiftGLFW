@@ -18,7 +18,7 @@ let package = Package(
         .executable(name: "GLFW Sample", targets: ["GLFWSample"])
     ],
     dependencies: [
-        .package(url: "https://github.com/thepotatoking55/SwiftGLFW.git", .upToNextMajor(from: "v4.1.0"))
+        .package(url: "https://github.com/thepotatoking55/SwiftGLFW.git", .upToNextMajor(from: "4.1.0"))
     ],
     targets: [
         .executableTarget(
