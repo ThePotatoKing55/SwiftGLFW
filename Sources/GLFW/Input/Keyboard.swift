@@ -40,7 +40,7 @@ public final class Keyboard {
         case leftBracket = 91, backslash, rightBracket
         case graveAccent = 96
         
-        case world1 = 161, world2
+        case global1 = 161, global2
         
         case escape = 256, enter, tab, backspace, insert, delete, right, left, down, up, pageUp, pageDown, home, end, capsLock, scrollLock, numLock, printScreen, pause
         
@@ -56,7 +56,6 @@ public final class Keyboard {
         public static let (leftWin, rightWin) = (leftSuper, rightSuper)
         
         case menu = 348
-        public static let last = menu
         
         public var scancode: Int {
             glfwGetKeyScancode(self.rawValue).int
@@ -66,8 +65,8 @@ public final class Keyboard {
             State(Int(glfwGetKey(window.pointer, rawValue)))
         }
         
-        public var name: String? {
-            glfwGetKeyName(rawValue, 0).flatMap { String(cString: $0) }
+        public var name: String {
+            String(cString: glfwGetKeyName(rawValue, 0))
         }
         
         public init(_ rawValue: Int32) {

@@ -3,14 +3,14 @@
 import PackageDescription
 
 let defines: [SwiftSetting] = [
-    /* When this fork https://github.com/thisistherk/glfw is merged into main */
-    .define("GLFW_METAL_LAYER_SUPPORT")
+    /* Uncomment when https://github.com/glfw/glfw/pull/1778 is merged into main */
+    //.define("GLFW_METAL_LAYER_SUPPORT", .when(platforms: [.macOS]))
 ]
 
 let package = Package(
     name: "SwiftGLFW",
     products: [
-        .library(name: "GLFW", targets: ["GLFW"])
+        .library(name: "SwiftGLFW", targets: ["GLFW"])
     ],
     dependencies: [
         .package(name: "CGLFW3", path: "Dependencies/CGLFW3")
@@ -20,10 +20,11 @@ let package = Package(
             name: "GLFW", dependencies: ["CGLFW3"],
             cSettings: [
                 .define("GLFW_EXPOSE_NATIVE_WIN32", .when(platforms: [.windows])),
+                .define("GLFW_EXPOSE_NATIVE_WGL", .when(platforms: [.windows])),
                 .define("GLFW_EXPOSE_NATIVE_COCOA", .when(platforms: [.macOS])),
                 .define("GLFW_EXPOSE_NATIVE_NSGL", .when(platforms: [.macOS])),
                 //.define("GL_SILENCE_DEPRECATION", .when(platforms: [.macOS])),
-                .define("GLFW_EXPOSE_NATIVE_WAYLAND", .when(platforms: [.linux]))
+                .define("GLFW_EXPOSE_NATIVE_X11", .when(platforms: [.linux]))
             ],
             swiftSettings: defines
         ),

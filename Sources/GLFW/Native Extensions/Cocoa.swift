@@ -1,5 +1,5 @@
-#if os(macOS) && canImport(AppKit)
-import AppKit
+#if os(macOS) && canImport(Cocoa)
+import Cocoa
 import CGLFW3
 
 extension Monitor {
@@ -14,7 +14,6 @@ extension GLFWWindow {
     }
 }
 
-@available(macOS, deprecated: 10.14, message: "Please use Metal or MetalKit.")
 extension GLFWWindow {
     public var nsOpenGLContext: NSOpenGLContext? {
         return glfwGetNSGLContext(pointer) as? NSOpenGLContext
@@ -29,5 +28,4 @@ extension GLFWWindow {
     }
 }
 #endif
-
 #endif

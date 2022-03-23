@@ -50,6 +50,10 @@ public final class GLFWWindow: GLFWObject {
         glfwMaximizeWindow(pointer)
     }
     
+    public func hide() {
+        glfwHideWindow(pointer)
+    }
+    
     public func restore() {
         glfwRestoreWindow(pointer)
     }

@@ -72,7 +72,7 @@ public final class Mouse {
     
     public enum Cursor {
         public enum StandardCursor: Int32 {
-            case arrow = 0x00036001, iBeam, crosshair, hand, resizeHorizontal, resizeVertical
+            case arrow = 0x00036001, ibeam, crosshair, hand, resizeHorizontal, resizeVertical, resizeNWSE, resizeNESW, move, notAllowed
         }
 
         case standard(StandardCursor),

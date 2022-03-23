@@ -4,13 +4,11 @@ import CGLFW3
 public struct GLFWGamepad {}
 
 public struct Gamepad: Hashable, Codable, Equatable {
-    public static subscript(id: ID) -> Gamepad? {
-        get {
-            if glfwJoystickIsGamepad(id.rawValue + GLFW_JOYSTICK_1) == true {
-                return Gamepad(id: id)
-            } else {
-                return nil
-            }
+    public init?(withID id: ID) {
+        if glfwJoystickIsGamepad(id.rawValue + GLFW_JOYSTICK_1) == true {
+            self.id = id
+        } else {
+            return nil
         }
     }
     
@@ -20,24 +18,53 @@ public struct Gamepad: Hashable, Codable, Equatable {
     }
     
     public static var connectedGamepads: [Gamepad] {
-        return (0...15).compactMap { Gamepad[ID(rawValue: $0)!] }
+        return (0..<16).compactMap(ID.init(rawValue:)).compactMap(Gamepad.init(withID:))
     }
     
     public let id: ID
+    
+    public static func name(id: ID) -> String {
+        String(cString: glfwGetGamepadName(id.rawValue))
+    }
     
     public var name: String {
         return String(cString: glfwGetGamepadName(id.rawValue))
     }
     
+    public static func buttons(id: ID) -> [ButtonState] {
+        var state = GLFWgamepadstate()
+        glfwGetGamepadState(id.rawValue, &state)
+        return withUnsafePointer(to: state.buttons) { ptr in
+            ptr.withMemoryRebound(to: UInt8.self, capacity: 15) { buttonPtr in
+                Array(UnsafeBufferPointer(start: buttonPtr, count: 15)).map(\.int).map(ButtonState.init)
+            }
+        }
+    }
+    
+    public static func axes(id: ID) -> [Float] {
+        var state = GLFWgamepadstate()
+        glfwGetGamepadState(id.rawValue, &state)
+        return withUnsafePointer(to: state.axes) { ptr in
+            ptr.withMemoryRebound(to: Float.self, capacity: 6) { axisPtr in
+                Array(UnsafeBufferPointer(start: axisPtr, count: 6))
+            }
+        }
+    }
+    
     public struct Input {
         fileprivate var buttons: [ButtonState], axes: [Float]
         fileprivate init(state: GLFWgamepadstate) {
-            let reflection = Mirror(reflecting: state.buttons)
-            let buttons = (reflection.children.map(\.value) as! [UInt8]).map(\.int)
-            self.buttons = buttons.map(ButtonState.init)
+            self.buttons = withUnsafePointer(to: state.buttons) { ptr in
+                ptr.withMemoryRebound(to: UInt8.self, capacity: 15) { buttonPtr in
+                    Array(UnsafeBufferPointer(start: buttonPtr, count: 15)).map(\.int).map(ButtonState.init)
+                }
+            }
             
-            let axisReflection = Mirror(reflecting: state.axes)
-            self.axes = (axisReflection.children.map(\.value) as! [Float])
+            self.axes = withUnsafePointer(to: state.axes) { ptr in
+                ptr.withMemoryRebound(to: Float.self, capacity: 6) { axisPtr in
+                    Array(UnsafeBufferPointer(start: axisPtr, count: 6))
+                }
+            }
         }
         
         public var a: ButtonState { buttons[GLFW_GAMEPAD_BUTTON_A.int] }
