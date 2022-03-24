@@ -1,9 +1,6 @@
 import CGLFW3
 
-@available(*, unavailable, renamed: "Monitor")
-public final class GLFWMonitor {}
-
-public final class Monitor: GLFWObject {
+public final class GLFWMonitor: GLFWObject {
     internal(set) public var pointer: OpaquePointer?
     
     public var connectionHandler: (() -> Void)?
@@ -15,21 +12,21 @@ public final class Monitor: GLFWObject {
         guard let pointer = pointer else { return }
         glfwSetMonitorUserPointer(pointer, Unmanaged.passUnretained(self).toOpaque())
         
-        func monitorObject(_ pointer: OpaquePointer?) -> Monitor {
+        func monitorObject(_ pointer: OpaquePointer?) -> GLFWMonitor {
             Unmanaged.fromOpaque(glfwGetMonitorUserPointer(pointer)).takeUnretainedValue()
         }
         
         glfwSetMonitorCallback {
-            let monitor = Monitor.fromOpaque($0)
+            let monitor = GLFWMonitor.fromOpaque($0)
             $1.bool ? monitor.connectionHandler?() : monitor.disconnectionHandler?()
         }
     }
     
-    public static func fromOpaque(_ pointer: OpaquePointer!) -> Monitor {
+    public static func fromOpaque(_ pointer: OpaquePointer!) -> GLFWMonitor {
         if let opaque = glfwGetMonitorUserPointer(pointer) {
             return Unmanaged.fromOpaque(opaque).takeUnretainedValue()
         } else {
-            return Monitor(pointer)
+            return GLFWMonitor(pointer)
         }
     }
     
@@ -38,33 +35,33 @@ public final class Monitor: GLFWObject {
         glfwSetMonitorUserPointer(pointer, nil)
     }
     
-    public static var primary: Monitor {
+    public static var primary: GLFWMonitor {
         .fromOpaque(glfwGetPrimaryMonitor())
     }
     
-    public static var current: [Monitor] {
+    public static var current: [GLFWMonitor] {
         var count = Int32.zero
         let pointer = glfwGetMonitors(&count)
         let array = Array(UnsafeBufferPointer(start: pointer, count: count.int))
-        return array.map(Monitor.fromOpaque(_:))
+        return array.map(GLFWMonitor.fromOpaque(_:))
     }
     
     public var name: String {
         String(cString: glfwGetMonitorName(pointer))
     }
     
-    public var virtualPosition: DiscretePoint {
+    public var virtualPosition: Point {
         var x = Int32.zero, y = Int32.zero
         glfwGetMonitorPos(pointer, &x, &y)
-        return DiscretePoint(x: x.int, y: y.int)
+        return Point(x: Double(x), y: Double(y))
     }
     
-    public typealias SizeInMillimeters = DiscreteSize
+    public typealias SizeInMillimeters = Size
     
     public var physicalSize: SizeInMillimeters {
         var width = Int32.zero, height = Int32.zero
         glfwGetMonitorPhysicalSize(pointer, &width, &height)
-        return SizeInMillimeters(width: width.int, height: height.int)
+        return SizeInMillimeters(width: Double(width), height: Double(height))
     }
     
     public var contentScale: ContentScale {
@@ -73,19 +70,19 @@ public final class Monitor: GLFWObject {
         return ContentScale(x: Double(xscale), y: Double(yscale))
     }
     
-    public var workArea: DiscreteFrame {
+    public var workArea: Frame {
         var x = Int32.zero, y = Int32.zero, width = Int32.zero, height = Int32.zero
         glfwGetMonitorWorkarea(pointer, &x, &y, &width, &height)
-        return DiscreteFrame(x: x.int, y: y.int, width: width.int, height: height.int)
+        return Frame(x: Double(x), y: Double(y), width: Double(width), height: Double(height))
     }
     
     public struct VideoMode: Equatable, Codable, Hashable {
         public var redBitDepth, greenBitDepth, blueBitDepth: Int
-        public var size: DiscreteSize
+        public var size: Size
         public var refreshRate: Int
         internal init(_ vidMode: GLFWvidmode) {
             (redBitDepth, greenBitDepth, blueBitDepth) = (vidMode.redBits.int, vidMode.greenBits.int, vidMode.blueBits.int)
-            size = DiscreteSize(vidMode.width.int, vidMode.height.int)
+            size = Size(Double(vidMode.width), Double(vidMode.height))
             refreshRate = vidMode.refreshRate.int
         }
     }

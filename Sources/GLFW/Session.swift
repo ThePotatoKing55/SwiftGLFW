@@ -51,7 +51,7 @@ public enum GLFWSession {
     }
     
     public static func initialize() throws {
-        if glfwInit() != GLFW_TRUE {
+        guard glfwInit() == .true else {
             try checkForError()
             throw GLFWError(kind: .unknown, description: "GLFW init failed, but no error was thrown.")
         }
@@ -61,16 +61,18 @@ public enum GLFWSession {
         glfwTerminate()
     }
     
-    public static func getClipboardContents() -> String? {
-        glfwGetClipboardString(nil).flatMap(String.init(cString:))
-    }
-    
-    public static func setClipboardContents(_ string: String?) {
-        glfwSetClipboardString(nil, string)
+    public static var clipboard: String? {
+        get { glfwGetClipboardString(nil).flatMap(String.init(cString:)) }
+        set { glfwSetClipboardString(nil, newValue) }
     }
     
     public static func pollInputEvents() {
         glfwPollEvents()
+        for index in 0 ..< 16 {
+            if glfwGetGamepadState(index.int32 + .gamepad1, &Gamepad.states[index]) == .false {
+                Gamepad.states[index] = GLFWgamepadstate()
+            }
+        }
     }
     
     public static func waitEvents() {

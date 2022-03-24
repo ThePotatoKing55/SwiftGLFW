@@ -1,7 +1,4 @@
-import CGLFW3
-
-@available(*, unavailable, renamed: "Joystick")
-public struct GLFWJoystick {}
+/*import CGLFW3
 
 public struct Joystick: Hashable, Codable, Equatable {
     public static subscript(id: ID) -> Joystick? {
@@ -39,7 +36,7 @@ public struct Joystick: Hashable, Codable, Equatable {
         var count = Int32.zero
         let pointer = glfwGetJoystickButtons(id.rawValue, &count)
         let buffer = UnsafeBufferPointer(start: pointer, count: count.int)
-        return Array(buffer).map { ButtonState(Int($0)) }
+        return Array(buffer).map { ButtonState(Int32($0)) }
     }
     
     public var guid: String {
@@ -69,3 +66,4 @@ public struct Joystick: Hashable, Codable, Equatable {
         return Array(UnsafeBufferPointer(start: pointer, count: count.int)).map(HatState.init)
     }
 }
+*/

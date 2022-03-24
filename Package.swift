@@ -3,7 +3,7 @@
 import PackageDescription
 
 let defines: [SwiftSetting] = [
-    /* Uncomment when https://github.com/glfw/glfw/pull/1778 is merged into main */
+    /* Uncomment when https://github.com/glfw/glfw/pull/1778 is merged into master */
     //.define("GLFW_METAL_LAYER_SUPPORT", .when(platforms: [.macOS]))
 ]
 
@@ -13,7 +13,7 @@ let package = Package(
         .library(name: "SwiftGLFW", targets: ["GLFW"])
     ],
     dependencies: [
-        .package(name: "CGLFW3", path: "Dependencies/CGLFW3")
+        .package(url: "https://github.com/thepotatoking55/CGLFW3.git", branch: "main")
     ],
     targets: [
         .target(

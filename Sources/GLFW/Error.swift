@@ -36,12 +36,12 @@ public struct GLFWError: Error {
         }
     }
     
-    internal init(kind: ErrorKind, description: String? = nil) {
+    init(kind: ErrorKind, description: String? = nil) {
         self.kind = kind
         self.description = description
     }
     
-    internal init(kind: Int32, description: UnsafePointer<CChar>?) {
+    init(kind: Int32, description: UnsafePointer<CChar>?) {
         self.init(kind: ErrorKind(rawValue: kind) ?? .unknown, description: description.flatMap(String.init(cString:)))
     }
 }

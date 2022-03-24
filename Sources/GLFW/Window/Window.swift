@@ -5,7 +5,12 @@ public final class GLFWWindow: GLFWObject {
     
     public static var hints = Hints()
     
-    public var frameChangeHandler: ((DiscreteFrame) -> Void)?
+    public var positionChangeHandler: ((Point) -> Void)?
+    public var sizeChangeHandler: ((Size) -> Void)?
+    
+    @available(*, unavailable, message: "Replaced with positionChangeHandler and sizeChangeHandler")
+    public var frameChangeHandler: ((Frame) -> Void)?
+    
     public var shouldCloseHandler: (() -> Bool)?
     public var refreshHandler: (() -> Void)?
     public var receiveFocusHandler: (() -> Void)?
@@ -13,29 +18,29 @@ public final class GLFWWindow: GLFWObject {
     public var minimizeHandler: (() -> Void)?
     public var maximizeHandler: (() -> Void)?
     public var restoreHandler: (() -> Void)?
-    public var framebufferSizeChangeHandler: ((DiscreteSize) -> Void)?
+    public var framebufferSizeChangeHandler: ((Size) -> Void)?
     public var contentScaleChangeHandler: ((ContentScale) -> Void)?
-    public var keyInputHandler: ((Keyboard.Key, Int, Keyboard.Key.State, Keyboard.Modifier) -> Void)?
+    public var keyInputHandler: ((Keyboard.Key, Int, ButtonState, Keyboard.Modifier) -> Void)?
     public var textInputHandler: ((String) -> Void)?
     
     public var cursorEnterHandler: (() -> Void)?
     public var cursorExitHandler: (() -> Void)?
-    public var mouseButtonHandler: ((Mouse.Button, Mouse.Button.State, Keyboard.Modifier) -> Void)?
+    public var mouseButtonHandler: ((Mouse.Button, ButtonState, Keyboard.Modifier) -> Void)?
     public var scrollInputHandler: ((Point) -> Void)?
     
     public var dragAndDropHandler: (([String]) -> Void)?
     
     public enum WindowMode {
-        case minimized, maximized, fullscreen(Monitor), windowed
+        case minimized, maximized, fullscreen(GLFWMonitor), windowed
     }
     
     public var windowMode: WindowMode {
         if let monitor = glfwGetWindowMonitor(pointer) {
             let opaque = OpaquePointer(glfwGetMonitorUserPointer(monitor))
-            return .fullscreen(Monitor.fromOpaque(opaque))
-        } else if attributes[Constant.iconified].bool {
+            return .fullscreen(GLFWMonitor.fromOpaque(opaque))
+        } else if attributes[.iconified].bool {
             return .minimized
-        } else if attributes[Constant.maximized].bool {
+        } else if attributes[.maximized].bool {
             return .maximized
         } else {
             return .windowed
@@ -58,17 +63,17 @@ public final class GLFWWindow: GLFWObject {
         glfwRestoreWindow(pointer)
     }
     
-    public func makeFullscreen(monitor: Monitor, size: DiscreteSize, refreshRate: Int? = nil) {
-        glfwSetWindowMonitor(pointer, monitor.pointer, .zero, .zero, size.width.int32, size.height.int32, refreshRate?.int32 ?? Constant.dontCare)
+    public func makeFullscreen(monitor: GLFWMonitor, size: Size, refreshRate: Int? = nil) {
+        glfwSetWindowMonitor(pointer, monitor.pointer, .zero, .zero, Int32(size.width), Int32(size.height), refreshRate?.int32 ?? .dontCare)
     }
     
-    public func makeFullscreen(monitor: Monitor = .primary) {
+    public func makeFullscreen(monitor: GLFWMonitor = .primary) {
         makeFullscreen(monitor: monitor, size: monitor.workArea.size)
     }
     
-    public func exitFullscreen(withFrame newFrame: DiscreteFrame) {
-        glfwSetWindowPos(pointer, newFrame.x.int32, newFrame.x.int32)
-        glfwSetWindowSize(pointer, newFrame.width.int32, newFrame.height.int32)
+    public func exitFullscreen(withFrame newFrame: Frame) {
+        glfwSetWindowPos(pointer, Int32(newFrame.x), Int32(newFrame.y))
+        glfwSetWindowSize(pointer, Int32(newFrame.width), Int32(newFrame.height))
     }
     
     public var shouldClose: Bool {
@@ -101,8 +106,8 @@ public final class GLFWWindow: GLFWObject {
     }
     
     public var canBeResized: Bool {
-        get { attributes[Constant.resizable].bool }
-        set { attributes[Constant.resizable] = newValue.int32 }
+        get { attributes[.resizable].bool }
+        set { attributes[.resizable] = newValue.int32 }
     }
     
     public var opacity: Float {
@@ -111,31 +116,31 @@ public final class GLFWWindow: GLFWObject {
     }
     
     public var isVisible: Bool {
-        attributes[Constant.visible].bool
+        attributes[.visible].bool
     }
     
     public var isDecorated: Bool {
-        get { attributes[Constant.decorated].bool }
-        set { attributes[Constant.decorated] = newValue.int32 }
+        get { attributes[.decorated].bool }
+        set { attributes[.decorated] = newValue.int32 }
     }
     
     public var isFloating: Bool {
-        get { attributes[Constant.floating].bool }
-        set { attributes[Constant.floating] = newValue.int32 }
+        get { attributes[.floating].bool }
+        set { attributes[.floating] = newValue.int32 }
     }
     
     public var minimizeOnLoseFocus: Bool {
-        get { attributes[Constant.autoIconify].bool }
-        set { attributes[Constant.autoIconify] = newValue.int32 }
+        get { attributes[.autoIconify].bool }
+        set { attributes[.autoIconify] = newValue.int32 }
     }
     
     public var focusWhenShown: Bool {
-        get { attributes[Constant.focusOnShow].bool }
-        set { attributes[Constant.focusOnShow] = newValue.int32 }
+        get { attributes[.focusOnShow].bool }
+        set { attributes[.focusOnShow] = newValue.int32 }
     }
     
     public var isInFocus: Bool {
-        attributes[Constant.focused].bool
+        attributes[.focused].bool
     }
     
     public func focus(force: Bool = false) {
@@ -143,43 +148,52 @@ public final class GLFWWindow: GLFWObject {
     }
     
     public var isUnderCursor: Bool {
-        attributes[Constant.hovered].bool
+        attributes[.hovered].bool
     }
     
     public var transparentFramebuffer: Bool {
-        attributes[Constant.transparentFramebuffer].bool
+        attributes[.transparentFramebuffer].bool
     }
     
     public func swapBuffers() {
         glfwSwapBuffers(pointer)
     }
     
-    public var frame: DiscreteFrame {
+    public var position: Point {
         get {
-            var xpos = Int32.zero, ypos = Int32.zero, width = Int32.zero, height = Int32.zero
+            var xpos = Int32.zero, ypos = Int32.zero
             glfwGetWindowPos(pointer, &xpos, &ypos)
-            glfwGetWindowSize(pointer, &width, &height)
-            return DiscreteFrame(x: xpos.int, y: ypos.int, width: width.int, height: height.int)
+            return Point(xpos.int, ypos.int)
         }
         set {
-            if newValue.origin != frame.origin {
-                glfwSetWindowPos(pointer, newValue.x.int32, newValue.y.int32)
-            }
-            if newValue.size != frame.size {
-                glfwSetWindowSize(pointer, newValue.width.int32, newValue.height.int32)
-            }
+            glfwSetWindowPos(pointer, Int32(newValue.x), Int32(newValue.y))
+        }
+    }
+    
+    public var size: Size {
+        get {
+            var width = Int32.zero, height = Int32.zero
+            glfwGetWindowSize(pointer, &width, &height)
+            return Size(width.int, height.int)
+        }
+        set {
+            glfwSetWindowSize(pointer, Int32(newValue.width), Int32(newValue.height))
         }
     }
     
     public func setSizeLimits(minWidth: Int?, minHeight: Int?, maxWidth: Int?, maxHeight: Int?) {
-        let minWidth = minWidth?.int32 ?? Constant.dontCare
-        let minHeight = minHeight?.int32 ?? Constant.dontCare
-        let maxWidth = maxWidth?.int32 ?? Constant.dontCare
-        let maxHeight = maxHeight?.int32 ?? Constant.dontCare
+        let minWidth = minWidth?.int32 ?? .dontCare
+        let minHeight = minHeight?.int32 ?? .dontCare
+        let maxWidth = maxWidth?.int32 ?? .dontCare
+        let maxHeight = maxHeight?.int32 ?? .dontCare
         glfwSetWindowSizeLimits(pointer, minWidth, minHeight, maxWidth, maxHeight)
     }
     
-    public func setSizeLimits(min: DiscreteSize?, max: DiscreteSize?) {
+    public func setSizeLimits(minWidth: Double?, minHeight: Double?, maxWidth: Double?, maxHeight: Double?) {
+        setSizeLimits(minWidth: minWidth.map(Int.init), minHeight: minHeight.map(Int.init), maxWidth: maxWidth.map(Int.init), maxHeight: maxHeight.map(Int.init))
+    }
+    
+    public func setSizeLimits(min: Size?, max: Size?) {
         setSizeLimits(minWidth: min?.width, minHeight: min?.height, maxWidth: max?.width, maxHeight: max?.height)
     }
     
@@ -187,18 +201,22 @@ public final class GLFWWindow: GLFWObject {
         glfwSetWindowAspectRatio(pointer, numerator.int32, denominator.int32)
     }
     
+    public func setAspectRatio(_ numerator: Double, _ denominator: Double) {
+        setAspectRatio(Int(numerator), Int(denominator))
+    }
+    
     public func lockAspectRatio() {
-        setAspectRatio(frame.size.width, frame.size.height)
+        setAspectRatio(size.width, size.height)
     }
     
     public func resetAspectRatio() {
-        glfwSetWindowAspectRatio(pointer, Constant.dontCare, Constant.dontCare)
+        glfwSetWindowAspectRatio(pointer, .dontCare, .dontCare)
     }
     
-    public var framebufferSize: DiscreteSize {
+    public var framebufferSize: Size {
         var width = Int32.zero, height = Int32.zero
         glfwGetFramebufferSize(pointer, &width, &height)
-        return DiscreteSize(width: width.int, height: height.int)
+        return Size(width.int, height.int)
     }
     
     public var contentScale: ContentScale {
@@ -207,33 +225,17 @@ public final class GLFWWindow: GLFWObject {
         return ContentScale(x: Double(xscale), y: Double(yscale))
     }
     
-    private func positionChanged(to pos: DiscretePoint) {
-        var width = Int32.zero, height = Int32.zero
-        glfwGetWindowSize(pointer, &width, &height)
-        let size = DiscreteSize(width: width.int, height: height.int)
-        let origin = DiscretePoint(x: pos.x.int, y: pos.y.int)
-        frameChangeHandler?(DiscreteFrame(origin: origin, size: size))
-    }
-    
-    private func sizeChanged(to size: DiscreteSize) {
-        var xpos = Int32.zero, ypos = Int32.zero
-        glfwGetWindowPos(pointer, &xpos, &ypos)
-        let origin = DiscretePoint(x: xpos.int, y: ypos.int)
-        let size = DiscreteSize(width: size.width.int, height: size.height.int)
-        frameChangeHandler?(DiscreteFrame(origin: origin, size: size))
-    }
-    
     internal init(_ pointer: OpaquePointer!) {
         self.pointer = pointer
         glfwSetWindowUserPointer(pointer, Unmanaged.passUnretained(self).toOpaque())
         
         glfwSetWindowPosCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            window.positionChanged(to: DiscretePoint(x: $1.int, y: $2.int))
+            window.positionChangeHandler?(Point($1.int, $2.int))
         }
         glfwSetWindowSizeCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            window.sizeChanged(to: DiscreteSize(width: $1.int, height: $2.int))
+            window.sizeChangeHandler?(Size($1.int, $2.int))
         }
         glfwSetWindowCloseCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
@@ -257,7 +259,7 @@ public final class GLFWWindow: GLFWObject {
         }
         glfwSetFramebufferSizeCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            window.framebufferSizeChangeHandler?(DiscreteSize(width: Int($1), height: Int($2)))
+            window.framebufferSizeChangeHandler?(Size(width: Int($1), height: Int($2)))
         }
         glfwSetWindowContentScaleCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
@@ -265,7 +267,7 @@ public final class GLFWWindow: GLFWObject {
         }
         glfwSetKeyCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            window.keyInputHandler?(Keyboard.Key($1), $2.int, Keyboard.Key.State(Int($3)), Keyboard.Modifier(rawValue: $4))
+            window.keyInputHandler?(Keyboard.Key($1), $2.int, ButtonState($3), Keyboard.Modifier(rawValue: $4))
         }
         glfwSetCharCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
@@ -278,7 +280,7 @@ public final class GLFWWindow: GLFWObject {
         }
         glfwSetMouseButtonCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            window.mouseButtonHandler?(Mouse.Button(rawValue: $1) ?? .left, Mouse.Button.State(rawValue: $2) ?? .released, Keyboard.Modifier(rawValue: $3))
+            window.mouseButtonHandler?(Mouse.Button(rawValue: $1) ?? .left, ButtonState($2), Keyboard.Modifier(rawValue: $3))
         }
         glfwSetScrollCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
@@ -295,9 +297,10 @@ public final class GLFWWindow: GLFWObject {
     deinit {
         glfwSetWindowUserPointer(pointer, nil)
         glfwDestroyWindow(pointer)
+        glfwDestroyCursor(cursorPtr)
     }
     
-    public convenience init(width: Int, height: Int, title: String = "Window", fullscreenMonitor monitor: Monitor? = nil, sharedContext context: GLFWContext? = nil) throws {
+    public convenience init(width: Int, height: Int, title: String = "Window", monitor: GLFWMonitor? = nil, sharedContext context: GLFWContext? = nil) throws {
         let pointer = glfwCreateWindow(width.int32, height.int32, title, monitor?.pointer, context?.pointer)
         try GLFWSession.checkForError()
         self.init(pointer)
@@ -310,6 +313,18 @@ public final class GLFWWindow: GLFWObject {
             return Unmanaged.fromOpaque(opaque).takeUnretainedValue()
         } else {
             return GLFWWindow(pointer)
+        }
+    }
+    
+    private var cursorPtr: OpaquePointer? {
+        didSet {
+            glfwSetCursor(pointer, cursorPtr)
+            glfwDestroyCursor(oldValue)
+        }
+    }
+    internal var cursor: Mouse.Cursor = .default {
+        didSet {
+            cursorPtr = cursor.create()
         }
     }
 }

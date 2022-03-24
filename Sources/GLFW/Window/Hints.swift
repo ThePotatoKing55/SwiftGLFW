@@ -18,14 +18,14 @@ extension GLFWSession {
             }
         }
         
-        @BoolHint(Constant.joystickHatButtons)
+        @BoolHint(.joystickHatButtons)
         public var mapJoystickHatsToButtons: Bool?
         
         #if os(macOS)
-        @BoolHint(Constant.cocoaChDirResources)
+        @BoolHint(.cocoaChDirResources)
         public var relativeToAppResources: Bool?
         
-        @BoolHint(Constant.cocoaMenuBar)
+        @BoolHint(.cocoaMenuBar)
         public var generateMenuBar: Bool?
         #endif
     }
@@ -105,64 +105,64 @@ extension GLFWWindow {
             }
         }
         
-        @BoolHint(Constant.resizable)
+        @BoolHint(.resizable)
         public var isResizable: Bool?
         
-        @BoolHint(Constant.visible)
+        @BoolHint(.visible)
         public var isVisible: Bool?
         
-        @BoolHint(Constant.decorated)
+        @BoolHint(.decorated)
         public var isDecorated: Bool?
         
-        @BoolHint(Constant.focused)
+        @BoolHint(.focused)
         public var isInFocus: Bool?
         
-        @BoolHint(Constant.autoIconify)
+        @BoolHint(.autoIconify)
         public var minimizeOnLoseFocus: Bool?
         
-        @BoolHint(Constant.floating)
+        @BoolHint(.floating)
         public var isFloating: Bool?
         
-        @BoolHint(Constant.maximized)
+        @BoolHint(.maximized)
         public var maximized: Bool?
         
-        @BoolHint(Constant.centerCursor)
+        @BoolHint(.centerCursor)
         public var centerCursorOnShow: Bool?
         
-        @BoolHint(Constant.transparentFramebuffer)
+        @BoolHint(.transparentFramebuffer)
         public var transparentFramebuffer: Bool?
         
-        @BoolHint(Constant.focusOnShow)
+        @BoolHint(.focusOnShow)
         public var focusOnShow: Bool?
         
-        @BoolHint(Constant.scaleToMonitor)
+        @BoolHint(.scaleToMonitor)
         public var useMonitorContentScale: Bool?
         
-        @IntHint(Constant.redBits)
+        @IntHint(.redBits)
         public var redBitDepth: Int?
         
-        @IntHint(Constant.greenBits)
+        @IntHint(.greenBits)
         public var greenBitDepth: Int?
         
-        @IntHint(Constant.blueBits)
+        @IntHint(.blueBits)
         public var blueBitDepth: Int?
         
-        @IntHint(Constant.depthBits)
+        @IntHint(.depthBits)
         public var depthBitDepth: Int?
         
-        @IntHint(Constant.stencilBits)
+        @IntHint(.stencilBits)
         public var stencilBitDepth: Int?
         
-        @BoolHint(Constant.stereoRendering)
+        @BoolHint(.stereoRendering)
         public var stereoRendering: Bool?
         
-        @IntHint(Constant.msaaSamples)
+        @IntHint(.msaaSamples)
         public var msaaSamples: Int?
         
-        @BoolHint(Constant.srgbCapable)
+        @BoolHint(.srgbCapable)
         public var srgbCapable: Bool?
         
-        @IntHint(Constant.monitorRefreshRate)
+        @IntHint(.monitorRefreshRate)
         public var refreshRate: Int?
         
         public enum ClientAPI: Int32 {
@@ -170,14 +170,14 @@ extension GLFWWindow {
             case openGL = 0x00030001, embeddedOpenGL
         }
         
-        @RawHint(Constant.clientAPI)
+        @RawHint(.clientAPI)
         public var clientAPI: ClientAPI? = .openGL
         
         public enum ContextCreationAPI: Int32 {
             case native = 0x00036001, egl, osMesa
         }
         
-        @RawHint(Constant.contextCreationAPI)
+        @RawHint(.contextCreationAPI)
         public var contextCreationAPI: ContextCreationAPI?
         
         public enum OpenGLCompatibility: Int32 {
@@ -214,9 +214,9 @@ extension GLFWWindow {
             public static let v4_6 = OpenGLVersion(major: 4, minor: 6)
         }
         
-        @IntHint(Constant.contextVersionMajor)
+        @IntHint(.contextVersionMajor)
         private var openglMajor: Int?
-        @IntHint(Constant.contextVersionMinor)
+        @IntHint(.contextVersionMinor)
         private var openglMinor: Int?
         
         public var openglVersion: OpenGLVersion? {
@@ -226,52 +226,52 @@ extension GLFWWindow {
             }
         }
         
-        @RawHint(Constant.openglForwardCompatibility)
+        @RawHint(.openglForwardCompatibility)
         public var openglCompatibility: OpenGLCompatibility?
         
         public enum OpenGLProfile: Int32 {
             case any = 0, core = 0x00032001, compatibility
         }
         
-        @BoolHint(Constant.openglDebugContext)
+        @BoolHint(.openglDebugContext)
         public var openglDebugMode: Bool?
         
-        @RawHint(Constant.openglProfile)
+        @RawHint(.openglProfile)
         public var openglProfile: OpenGLProfile?
         
         public enum Robustness: Int32 {
             case noResetNotification = 0x00031001, loseContext
         }
         
-        @RawHint(Constant.contextRobustness)
+        @RawHint(.contextRobustness)
         public var robustness: Robustness?
         
         public enum ReleaseBehavior: Int32 {
             case any = 0, flushPipeline = 0x00035001, none
         }
         
-        @RawHint(Constant.contextReleaseBehavior)
+        @RawHint(.contextReleaseBehavior)
         public var releaseBehavior: ReleaseBehavior?
         
-        @BoolHint(Constant.contextSuppressErrors)
+        @BoolHint(.contextSuppressErrors)
         public var suppressErrors: Bool?
         
         #if os(macOS)
-        @BoolHint(Constant.cocoaRetinaFramebuffer)
+        @BoolHint(.cocoaRetinaFramebuffer)
         public var retinaFramebuffer: Bool?
         
-        @StringHint(Constant.cocoaFrameName)
+        @StringHint(.cocoaFrameName)
         public var frameName: String?
         
-        @BoolHint(Constant.cocoaGraphicsSwitching)
+        @BoolHint(.cocoaGraphicsSwitching)
         public var autoGraphicsSwitching: Bool?
         #endif
         
         #if os(Linux)
-        @StringHint(Constant.x11ClassName)
+        @StringHint(.x11ClassName)
         public var x11ClassName: String?
         
-        @StringHint(Constant.x11InstanceName)
+        @StringHint(.x11InstanceName)
         public var x11InstanceName: String?
         #endif
     }

@@ -2,14 +2,12 @@ import CGLFW3
 
 extension GLFWWindow {
     public var mouse: Mouse {
-        Mouse(in: self)
+        get { Mouse(in: self) }
+        set { }
     }
 }
 
-@available(*, unavailable, renamed: "Mouse")
-public final class GLFWMouse {}
-
-public final class Mouse {
+public struct Mouse {
     private let window: GLFWWindow
     private var pointer: OpaquePointer? { window.pointer }
     
@@ -17,40 +15,28 @@ public final class Mouse {
         self.window = window
     }
     
-    public var useRawMotionInput: Bool {
-        get { glfwGetInputMode(pointer, Constant.rawMouseMotion).bool }
-        set { glfwRawMouseMotionSupported().bool ? glfwSetInputMode(pointer, Constant.rawMouseMotion, newValue.int32) : () }
+    public var useRawInput: Bool {
+        get { glfwGetInputMode(pointer, .rawMouseMotion).bool }
+        set { glfwRawMouseMotionSupported().bool ? glfwSetInputMode(pointer, .rawMouseMotion, newValue.int32) : () }
     }
     
     public var stickyButtons: Bool {
-        get { glfwGetInputMode(pointer, Constant.stickyMouseButtons).bool }
-        set { glfwSetInputMode(pointer, Constant.stickyMouseButtons, newValue.int32) }
+        get { glfwGetInputMode(pointer, .stickyMouseButtons).bool }
+        set { glfwSetInputMode(pointer, .stickyMouseButtons, newValue.int32) }
     }
     
     public enum Button: Int32 {
-        public enum State: Int32 {
-            case released, pressed, unknown = -1
-            public init(_ rawValue: Int32) {
-                self = Self(rawValue: rawValue) ?? .unknown
-            }
-        }
-        
-        public func state(in window: GLFWWindow) -> State {
-            State(glfwGetMouseButton(window.pointer, rawValue))
-        }
-        
         case button1, button2, button3, button4, button5, button6, button7, button8
-        public static let last = button8
         public static let left = button1
         public static let right = button2
         public static let middle = button3
     }
     
-    public func state(for button: Button) -> Button.State {
-        button.state(in: window)
+    public func state(of button: Button) -> ButtonState {
+        ButtonState(glfwGetMouseButton(window.pointer, button.rawValue))
     }
     
-    public var cursorPosition: Point {
+    public var position: Point {
         get {
             var xpos = Double.zero, ypos = Double.zero
             glfwGetCursorPos(window.pointer, &xpos, &ypos)
@@ -66,34 +52,48 @@ public final class Mouse {
     }
     
     public var cursorMode: CursorMode {
-        get { CursorMode(rawValue: glfwGetInputMode(pointer, Constant.cursor)) ?? .normal }
-        set { glfwSetInputMode(pointer, Constant.cursor, newValue.rawValue) }
+        get { CursorMode(rawValue: glfwGetInputMode(pointer, .cursor)) ?? .normal }
+        set { glfwSetInputMode(pointer, .cursor, newValue.rawValue) }
     }
     
     public enum Cursor {
-        public enum StandardCursor: Int32 {
-            case arrow = 0x00036001, ibeam, crosshair, hand, resizeHorizontal, resizeVertical, resizeNWSE, resizeNESW, move, notAllowed
+        case arrow, ibeam, crosshair, hand, resizeHorizontal, resizeVertical, resizeNWSE, resizeNESW, move, notAllowed
+        case custom(Image, center: Point = .zero)
+        case `default`
+        
+        func create() -> OpaquePointer? {
+            switch self {
+                case .arrow:
+                    return glfwCreateStandardCursor(.arrowCursor)
+                case .ibeam:
+                    return glfwCreateStandardCursor(.iBeamCursor)
+                case .crosshair:
+                    return glfwCreateStandardCursor(.crosshairCursor)
+                case .hand:
+                    return glfwCreateStandardCursor(.handCursor)
+                case .resizeHorizontal:
+                    return glfwCreateStandardCursor(.horizontalResizeCursor)
+                case .resizeVertical:
+                    return glfwCreateStandardCursor(.verticalResizeCursor)
+                case .resizeNWSE:
+                    return glfwCreateStandardCursor(.resizeNWSECursor)
+                case .resizeNESW:
+                    return glfwCreateStandardCursor(.resizeNESWCursor)
+                case .move:
+                    return glfwCreateStandardCursor(.resizeAllCursor)
+                case .notAllowed:
+                    return glfwCreateStandardCursor(.notAllowedCursor)
+                case let .custom(image, center: center):
+                    return withUnsafePointer(to: image.glfwImage) { ptr in
+                        glfwCreateCursor(ptr, Int32(center.x), Int32(center.y))
+                    }
+                case .default:
+                    return nil
+            }
         }
-
-        case standard(StandardCursor),
-             image(GLFWImage),
-             `default`
     }
     
-    private var currentCursor: OpaquePointer?
-    
     public func setCursor(to cursor: Cursor) {
-        glfwDestroyCursor(currentCursor)
-        switch cursor {
-        case .standard(let shape):
-            currentCursor = glfwCreateStandardCursor(shape.rawValue)
-        case .image(let image):
-            var glfwImage = image.glfwImage
-            currentCursor = glfwCreateCursor(&glfwImage, .zero, .zero)
-        case .default:
-            currentCursor = nil
-        }
-        
-        glfwSetCursor(pointer, currentCursor)
+        window.cursor = cursor
     }
 }

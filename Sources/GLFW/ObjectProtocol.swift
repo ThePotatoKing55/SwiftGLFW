@@ -5,7 +5,11 @@ protocol GLFWObject: Equatable {
 }
 
 extension GLFWObject {
-    public static func == <T: GLFWObject>(lhs: Self, rhs: T) -> Bool {
+    public static func == (lhs: Self, rhs: any GLFWObject) -> Bool {
+        lhs.pointer == rhs.pointer
+    }
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.pointer == rhs.pointer
     }
 }

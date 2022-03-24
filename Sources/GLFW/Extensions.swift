@@ -2,7 +2,7 @@ import CGLFW3
 
 extension Int32: ExpressibleByBooleanLiteral {
     var bool: Bool {
-        self == Constant.true
+        self == .true
     }
     var int: Int {
         Int(self)
@@ -31,7 +31,7 @@ extension Int {
 
 extension UInt32 {
     var bool: Bool {
-        self == Constant.true
+        self == Int32.true
     }
     var int: Int {
         Int(self)
@@ -46,6 +46,6 @@ extension UInt {
 
 extension Bool {
     var int32: Int32 {
-        self ? Constant.true : Constant.false
+        self ? .true : .false
     }
 }

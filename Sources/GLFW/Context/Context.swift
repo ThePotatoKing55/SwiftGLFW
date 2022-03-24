@@ -26,41 +26,41 @@ public class GLFWContext: GLFWObject {
     public typealias Hints = GLFWWindow.Hints
     
     public var clientAPI: Hints.ClientAPI {
-        return .init(rawValue: attributes[Constant.clientAPI]) ?? .openGL
+        return .init(rawValue: attributes[.clientAPI]) ?? .openGL
     }
     
     public var creationAPI: Hints.ContextCreationAPI {
-        return .init(rawValue: attributes[Constant.contextCreationAPI]) ?? .native
+        return .init(rawValue: attributes[.contextCreationAPI]) ?? .native
     }
     
     public var openGLVersion: Hints.OpenGLVersion {
-        let major = attributes[Constant.contextVersionMajor].int
-        let minor = attributes[Constant.contextVersionMinor].int
+        let major = attributes[.contextVersionMajor].int
+        let minor = attributes[.contextVersionMinor].int
         return .init(major: major, minor: minor)
     }
     
     public var openglCompatibility: Hints.OpenGLCompatibility {
-        return .init(rawValue: attributes[Constant.openglForwardCompatibility]) ?? .backwards
+        return .init(rawValue: attributes[.openglForwardCompatibility]) ?? .backwards
     }
     
     public var debugMode: Bool {
-        attributes[Constant.openglDebugContext].bool
+        attributes[.openglDebugContext].bool
     }
     
     public var openglProfile: Hints.OpenGLProfile {
-        return .init(rawValue: attributes[Constant.openglProfile]) ?? .any
+        return .init(rawValue: attributes[.openglProfile]) ?? .any
     }
     
     public var releaseBehavior: Hints.ReleaseBehavior {
-        return .init(rawValue: attributes[Constant.contextReleaseBehavior]) ?? .any
+        return .init(rawValue: attributes[.contextReleaseBehavior]) ?? .any
     }
     
     public var suppressErrors: Bool {
-        return attributes[Constant.contextSuppressErrors].bool
+        return attributes[.contextSuppressErrors].bool
     }
     
     public var robustness: Hints.Robustness {
-        return .init(rawValue: attributes[Constant.contextRobustness]) ?? .loseContext
+        return .init(rawValue: attributes[.contextRobustness]) ?? .loseContext
     }
 }
 

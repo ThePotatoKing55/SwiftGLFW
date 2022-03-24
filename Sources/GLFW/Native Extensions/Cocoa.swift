@@ -2,7 +2,7 @@
 import Cocoa
 import CGLFW3
 
-extension Monitor {
+extension GLFWMonitor {
     public var directDisplayID: CGDirectDisplayID {
         return glfwGetCocoaMonitor(pointer)
     }
@@ -12,9 +12,14 @@ extension GLFWWindow {
     public var nsWindow: NSWindow? {
         return glfwGetCocoaWindow(pointer) as? NSWindow
     }
+    
+    @available(*, deprecated, renamed: "GLFWWindow.context.nsOpenGLContext")
+    public var nsOpenGLContext: NSOpenGLContext? {
+        return context.nsOpenGLContext
+    }
 }
 
-extension GLFWWindow {
+extension GLFWContext {
     public var nsOpenGLContext: NSOpenGLContext? {
         return glfwGetNSGLContext(pointer) as? NSOpenGLContext
     }

@@ -2,14 +2,12 @@ import CGLFW3
 
 extension GLFWWindow {
     public var keyboard: Keyboard {
-        Keyboard(in: self)
+        get { Keyboard(in: self) }
+        set { }
     }
 }
 
-@available(*, unavailable, renamed: "Keyboard")
-public final class GLFWKeyboard {}
-
-public final class Keyboard {
+public struct Keyboard {
     private let window: GLFWWindow
     
     init(in window: GLFWWindow) {
@@ -17,18 +15,16 @@ public final class Keyboard {
     }
     
     public var stickyKeys: Bool {
-        get { glfwGetInputMode(window.pointer, Constant.stickyKeys).bool }
-        set { glfwSetInputMode(window.pointer, Constant.stickyKeys, newValue.int32) }
+        get { glfwGetInputMode(window.pointer, .stickyKeys).bool }
+        set { glfwSetInputMode(window.pointer, .stickyKeys, newValue.int32) }
     }
     
     public var sendLocksAsKeyMods: Bool {
-        get { glfwGetInputMode(window.pointer, Constant.lockKeyMods).bool }
-        set { glfwSetInputMode(window.pointer, Constant.lockKeyMods, newValue.int32) }
+        get { glfwGetInputMode(window.pointer, .lockKeyMods).bool }
+        set { glfwSetInputMode(window.pointer, .lockKeyMods, newValue.int32) }
     }
     
     public enum Key: Int32 {
-        public typealias State = ButtonState
-        
         case unknown = -1
         case space = 32
         case apostrophe = 39
@@ -61,10 +57,6 @@ public final class Keyboard {
             glfwGetKeyScancode(self.rawValue).int
         }
         
-        public func state(in window: GLFWWindow) -> State {
-            State(Int(glfwGetKey(window.pointer, rawValue)))
-        }
-        
         public var name: String {
             String(cString: glfwGetKeyName(rawValue, 0))
         }
@@ -74,8 +66,8 @@ public final class Keyboard {
         }
     }
     
-    public func state(for key: Key) -> Key.State {
-        key.state(in: window)
+    public func state(of key: Key) -> ButtonState {
+        ButtonState(glfwGetKey(window.pointer, key.rawValue))
     }
     
     public struct Modifier: OptionSet {

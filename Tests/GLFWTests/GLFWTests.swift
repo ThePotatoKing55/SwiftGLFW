@@ -9,7 +9,7 @@ class GLFWTests: XCTestCase {
     }
     
     func testMonitorCocoaBindings() {
-        XCTAssertEqual(CGMainDisplayID(), Monitor.primary.directDisplayID)
+        XCTAssertEqual(CGMainDisplayID(), GLFWMonitor.primary.directDisplayID)
     }
     
     func testWindowCreation() {
@@ -20,15 +20,20 @@ class GLFWTests: XCTestCase {
         window = try? GLFWWindow(width: 400, height: 300)
         XCTAssertNotNil(window)
         
-        window?.context.makeCurrent()
-        XCTAssertNotNil(window?.nsWindow)
-        XCTAssertNotNil(window?.nsOpenGLContext)
+        window.context.makeCurrent()
+        XCTAssertNotNil(window.nsWindow)
+        XCTAssertNotNil(window.context.nsOpenGLContext)
         
         #if GLFW_METAL_LAYER_SUPPORT
-        XCTAssertNotNil(window?.metalLayer)
+        XCTAssertNotNil(window.metalLayer)
         #else
-        print("GLFW_METAL_LAYER_SUPPORT not defined; skipping test")
+        print("GLFW_METAL_LAYER_SUPPORT not defined; skipping metal layer test")
         #endif
+        
+        while !window.shouldClose {
+            GLFWSession.pollInputEvents()
+            window.swapBuffers()
+        }
     }
     
     override class func tearDown() {

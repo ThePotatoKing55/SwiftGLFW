@@ -1,4 +1,4 @@
-public struct Point: Equatable, Hashable, Codable {
+public struct Point: Hashable, Codable {
     public var x: Double
     public var y: Double
     
@@ -9,6 +9,15 @@ public struct Point: Equatable, Hashable, Codable {
     
     public init(_ x: Double, _ y: Double) {
         self.init(x: x, y: y)
+    }
+    
+    public init(x: Int, y: Int) {
+        self.x = Double(x)
+        self.y = Double(y)
+    }
+    
+    public init(_ x: Int, _ y: Int) {
+        self.init(x: Double(x), y: Double(y))
     }
 }
 
