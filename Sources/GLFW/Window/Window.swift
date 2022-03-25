@@ -268,15 +268,9 @@ public final class GLFWWindow: GLFWObject {
     }
     
     deinit {
-        let pointer = self.pointer
-        let cursorPtr = self.cursorPtr
         glfwSetWindowUserPointer(pointer, nil)
-        Task {
-            await MainActor.run {
-                glfwDestroyWindow(pointer)
-                glfwDestroyCursor(cursorPtr)
-            }
-        }
+        glfwDestroyWindow(pointer)
+        glfwDestroyCursor(cursorPtr)
     }
     
     public convenience init(width: Int, height: Int, title: String = "Window", monitor: GLFWMonitor? = nil, sharedContext context: GLFWContext? = nil) throws {
