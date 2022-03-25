@@ -129,7 +129,7 @@ extension GLFWWindow {
             case openGL = 0x00030001, embeddedOpenGL
         }
         
-        @WindowHint(.contextCreationAPI, default: .openGL)
+        @WindowHint(.clientAPI, default: .openGL)
         public var clientAPI: ClientAPI
         
         public enum ContextCreationAPI: Int32, Sendable {
