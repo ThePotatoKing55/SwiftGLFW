@@ -14,6 +14,7 @@ class GLFWTests: XCTestCase {
     }
     
     func testWindowCreation() {
+        GLFWWindow.hints.clientAPI
         GLFWWindow.hints.openGLVersion = .v4_1
         GLFWWindow.hints.openGLProfile = .core
         GLFWWindow.hints.openGLCompatibility = .forward
