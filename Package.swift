@@ -9,6 +9,7 @@ let defines: [SwiftSetting] = [
 
 let package = Package(
     name: "SwiftGLFW",
+    platforms: [.macOS(.v10_15)],
     products: [
         .library(name: "SwiftGLFW", targets: ["GLFW"])
     ],

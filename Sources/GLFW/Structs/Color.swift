@@ -13,7 +13,7 @@ extension FixedWidthInteger {
     }
 }
 
-public struct Color: Hashable, Codable, ExpressibleByIntegerLiteral {
+public struct Color: Hashable, Codable, Sendable, ExpressibleByIntegerLiteral {
     public var redBits, greenBits, blueBits: UInt8
     public var alphaBits: UInt8 = .max
     

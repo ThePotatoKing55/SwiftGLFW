@@ -1,6 +1,6 @@
 import CGLFW3
 
-public struct Image: Hashable {
+public struct Image: Hashable, Sendable {
     public var pixels: [Color]
     public var width, height: Int
     

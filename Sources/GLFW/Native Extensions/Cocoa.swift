@@ -3,24 +3,20 @@ import Cocoa
 import CGLFW3
 
 extension GLFWMonitor {
-    public var directDisplayID: CGDirectDisplayID {
+    nonisolated public var directDisplayID: CGDirectDisplayID {
         return glfwGetCocoaMonitor(pointer)
     }
 }
 
 extension GLFWWindow {
-    public var nsWindow: NSWindow? {
+    nonisolated public var nsWindow: NSWindow? {
         return glfwGetCocoaWindow(pointer) as? NSWindow
-    }
-    
-    @available(*, deprecated, renamed: "GLFWWindow.context.nsOpenGLContext")
-    public var nsOpenGLContext: NSOpenGLContext? {
-        return context.nsOpenGLContext
     }
 }
 
 extension GLFWContext {
-    public var nsOpenGLContext: NSOpenGLContext? {
+    @available(macOS, deprecated: 10.14, message: "Please use Metal or MetalKit.")
+    nonisolated public var nsOpenGLContext: NSOpenGLContext? {
         return glfwGetNSGLContext(pointer) as? NSOpenGLContext
     }
 }

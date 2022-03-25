@@ -1,15 +1,51 @@
 import CGLFW3
 
-extension Int32: ExpressibleByBooleanLiteral {
-    var bool: Bool {
-        self == .true
+public protocol WindowHintValue {
+    func setter(hint: Int32)
+}
+
+public protocol WindowHintStringValue {
+    func setter(hint: Int32)
+}
+
+public protocol Int32Convertible: WindowHintValue {
+    init(_ int32: Int32)
+    var int32: Int32 { get }
+}
+
+extension Int32Convertible {
+    public func setter(hint: Int32) {
+        glfwWindowHint(hint, self.int32)
     }
-    var int: Int {
-        Int(self)
+}
+
+extension String: WindowHintStringValue {
+    public func setter(hint: Int32) {
+        glfwWindowHintString(hint, self)
     }
-    
-    public init(booleanLiteral value: BooleanLiteralType) {
-        self.init(value.int32)
+}
+
+extension Optional: WindowHintValue where Wrapped: Int32Convertible {
+    public func setter(hint: Int32) {
+        glfwWindowHint(hint, self?.int32 ?? .dontCare)
+    }
+}
+
+extension Optional: WindowHintStringValue where Wrapped == String {
+    public func setter(hint: Int32) {
+        glfwWindowHintString(hint, self)
+    }
+}
+
+protocol OptionalProtocol: ExpressibleByNilLiteral { }
+extension Optional: OptionalProtocol { }
+
+extension Bool: Int32Convertible {
+    public init(_ int32: Int32) {
+        self = int32 == .true
+    }
+    public var int32: Int32 {
+        self ? .true : .false
     }
 }
 
@@ -18,18 +54,14 @@ extension BinaryInteger {
         Int(self)
     }
     
-    var int32: Int32 {
+    public var int32: Int32 {
         Int32(self)
     }
 }
 
-extension Int {
-    var int32: Int32 {
-        Int32(self)
-    }
-}
+extension Int: Int32Convertible { }
 
-extension UInt32 {
+extension UInt32: Int32Convertible {
     var bool: Bool {
         self == Int32.true
     }
@@ -38,14 +70,62 @@ extension UInt32 {
     }
 }
 
-extension UInt {
-    var int32: UInt32 {
-        UInt32(self)
+extension GLFWWindow.Hints.ClientAPI: Int32Convertible {
+    public var int32: Int32 {
+        rawValue.int32
+    }
+    
+    public init(_ int32: Int32) {
+        self = Self(rawValue: int32) ?? .openGL
     }
 }
 
-extension Bool {
-    var int32: Int32 {
-        self ? .true : .false
+extension GLFWWindow.Hints.ContextCreationAPI: Int32Convertible {
+    public var int32: Int32 {
+        rawValue.int32
+    }
+    
+    public init(_ int32: Int32) {
+        self = Self(rawValue: int32) ?? .native
+    }
+}
+
+extension GLFWWindow.Hints.OpenGLCompatibility: Int32Convertible {
+    public var int32: Int32 {
+        rawValue.int32
+    }
+    
+    public init(_ int32: Int32) {
+        self = Self(rawValue: int32) ?? .backward
+    }
+}
+
+extension GLFWWindow.Hints.OpenGLProfile: Int32Convertible {
+    public var int32: Int32 {
+        rawValue.int32
+    }
+    
+    public init(_ int32: Int32) {
+        self = Self(rawValue: int32) ?? .any
+    }
+}
+
+extension GLFWWindow.Hints.ReleaseBehavior: Int32Convertible {
+    public var int32: Int32 {
+        rawValue.int32
+    }
+    
+    public init(_ int32: Int32) {
+        self = Self(rawValue: int32) ?? .any
+    }
+}
+
+extension GLFWWindow.Hints.Robustness: Int32Convertible {
+    public var int32: Int32 {
+        rawValue.int32
+    }
+    
+    public init(_ int32: Int32) {
+        self = Self(rawValue: int32) ?? .loseContext
     }
 }

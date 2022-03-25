@@ -7,24 +7,25 @@ extension GLFWWindow {
     }
 }
 
+@MainActor
 public struct Keyboard {
-    private let window: GLFWWindow
+    private weak var window: GLFWWindow!
     
     init(in window: GLFWWindow) {
         self.window = window
     }
     
     public var stickyKeys: Bool {
-        get { glfwGetInputMode(window.pointer, .stickyKeys).bool }
+        get { Bool(glfwGetInputMode(window.pointer, .stickyKeys)) }
         set { glfwSetInputMode(window.pointer, .stickyKeys, newValue.int32) }
     }
     
     public var sendLocksAsKeyMods: Bool {
-        get { glfwGetInputMode(window.pointer, .lockKeyMods).bool }
+        get { Bool(glfwGetInputMode(window.pointer, .lockKeyMods)) }
         set { glfwSetInputMode(window.pointer, .lockKeyMods, newValue.int32) }
     }
     
-    public enum Key: Int32 {
+    public enum Key: Int32, Sendable {
         case unknown = -1
         case space = 32
         case apostrophe = 39

@@ -1,4 +1,4 @@
-public struct Frame: Hashable, Codable {
+public struct Frame: Hashable, Codable, Sendable {
     public var origin: Point
     public var size: Size
     

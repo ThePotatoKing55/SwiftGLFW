@@ -1,4 +1,4 @@
-public struct Size: Hashable, Codable {
+public struct Size: Hashable, Codable, Sendable {
     public var width: Double
     public var height: Double
     

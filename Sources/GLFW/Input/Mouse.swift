@@ -7,22 +7,22 @@ extension GLFWWindow {
     }
 }
 
+@MainActor
 public struct Mouse {
-    private let window: GLFWWindow
-    private var pointer: OpaquePointer? { window.pointer }
+    private weak var window: GLFWWindow!
     
     init(in window: GLFWWindow) {
         self.window = window
     }
     
     public var useRawInput: Bool {
-        get { glfwGetInputMode(pointer, .rawMouseMotion).bool }
-        set { glfwRawMouseMotionSupported().bool ? glfwSetInputMode(pointer, .rawMouseMotion, newValue.int32) : () }
+        get { Bool(glfwGetInputMode(window.pointer, .rawMouseMotion)) }
+        set { Bool(glfwRawMouseMotionSupported()) ? glfwSetInputMode(window.pointer, .rawMouseMotion, newValue.int32) : () }
     }
     
     public var stickyButtons: Bool {
-        get { glfwGetInputMode(pointer, .stickyMouseButtons).bool }
-        set { glfwSetInputMode(pointer, .stickyMouseButtons, newValue.int32) }
+        get { Bool(glfwGetInputMode(window.pointer, .stickyMouseButtons)) }
+        set { glfwSetInputMode(window.pointer, .stickyMouseButtons, newValue.int32) }
     }
     
     public enum Button: Int32 {
@@ -47,21 +47,21 @@ public struct Mouse {
         }
     }
     
-    public enum CursorMode: Int32 {
+    public enum CursorMode: Int32, Sendable {
         case normal = 0x00034001, hidden = 0x00034002, disabled = 0x00034003
     }
     
     public var cursorMode: CursorMode {
-        get { CursorMode(rawValue: glfwGetInputMode(pointer, .cursor)) ?? .normal }
-        set { glfwSetInputMode(pointer, .cursor, newValue.rawValue) }
+        get { CursorMode(rawValue: glfwGetInputMode(window.pointer, .cursor)) ?? .normal }
+        set { glfwSetInputMode(window.pointer, .cursor, newValue.rawValue) }
     }
     
-    public enum Cursor {
+    public enum Cursor: Sendable {
         case arrow, ibeam, crosshair, hand, resizeHorizontal, resizeVertical, resizeNWSE, resizeNESW, move, notAllowed
         case custom(Image, center: Point = .zero)
         case `default`
         
-        func create() -> OpaquePointer? {
+        @MainActor func create() -> OpaquePointer? {
             switch self {
                 case .arrow:
                     return glfwCreateStandardCursor(.arrowCursor)
