@@ -85,14 +85,6 @@ public enum GLFWSession {
     
     @InitHint(.joystickHatButtons, default: false)
     public static var mapJoystickHatsToButtons: Bool
-    
-#if os(macOS)
-    @InitHint(.cocoaChDirResources, default: false)
-    public static var relativeToAppResources: Bool
-    
-    @InitHint(.cocoaMenuBar, default: true)
-    public static var generateMenuBar: Bool
-#endif
 }
 
 @propertyWrapper
