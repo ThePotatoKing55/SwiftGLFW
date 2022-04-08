@@ -10,23 +10,16 @@ public struct Image: Hashable, Sendable {
         self.height = height
     }
     
-    public init(width: Int, height: Int, initializer: @Sendable @escaping (Int, Int) -> Color) async {
+    public init(width: Int, height: Int, _ initializer: (Int, Int) -> Color) {
         self.width = width
         self.height = height
-        self.pixels = await withTaskGroup(of: (index: Int, row: [Color]).self, returning: [Color].self) { group in
-            var rows = [[Color]](repeating: [], count: height)
+        self.pixels = Array(unsafeUninitializedCapacity: width * height) { buffer, initializedCount in
             for y in 0 ..< height {
-                group.addTask {
-                    return (y, (0 ..< width).reduce(into: []) { row, x in
-                        row.append(initializer(x, y))
-                    })
+                for x in 0 ..< width {
+                    buffer[width * y + x] = initializer(x, y)
+                    initializedCount += 1
                 }
             }
-            for await result in group {
-                rows.insert(result.row, at: result.index)
-            }
-            
-            return rows.flatMap { $0 }
         }
     }
     

@@ -33,9 +33,9 @@ class GLFWTests: XCTestCase {
         
         Task {
             let size = 1024
-            let image = await Image(width: size, height: size, initializer: { x, y in
+            let image = Image(width: size, height: size) { x, y in
                 Color(h: Double(y)/Double(size), s: 1, v: 1)
-            })
+            }
             
             await MainActor.run {
                 window.setIcon(image)
