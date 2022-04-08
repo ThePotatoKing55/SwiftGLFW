@@ -14,7 +14,6 @@ class GLFWTests: XCTestCase {
     }
     
     func testWindowCreation() {
-        GLFWWindow.hints.clientAPI
         GLFWWindow.hints.openGLVersion = .v4_1
         GLFWWindow.hints.openGLProfile = .core
         GLFWWindow.hints.openGLCompatibility = .forward
@@ -28,11 +27,21 @@ class GLFWTests: XCTestCase {
         
         print(window.context.openGLVersion)
         
-        #if GLFW_METAL_LAYER_SUPPORT
+#if GLFW_METAL_LAYER_SUPPORT
         XCTAssertNotNil(window.metalLayer)
-        #else
-        print("GLFW_METAL_LAYER_SUPPORT not defined; skipping metal layer test")
-        #endif
+#endif
+        
+        Task {
+            let size = 1024
+            let image = await Image(width: size, height: size, initializer: { x, y in
+                Color(h: Double(y)/Double(size), s: 1, v: 1)
+            })
+            
+            await MainActor.run {
+                window.setIcon(image)
+                print("set app icon")
+            }
+        }
         
         while !window.shouldClose {
             GLFWSession.pollInputEvents()
