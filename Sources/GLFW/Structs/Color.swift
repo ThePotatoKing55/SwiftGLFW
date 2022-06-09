@@ -224,13 +224,13 @@ extension Color {
     public static func random(withAlphaBits a: UInt8 = .max) -> Color {
         Color(rBits: .random(in: .min ... .max), g: .random(in: .min ... .max), b: .random(in: .min ... .max), a: a)
     }
-    public static func random<G: RandomNumberGenerator>(withAlphaBits a: UInt8 = .max, using generator: inout G) -> Color {
+    public static func random(withAlphaBits a: UInt8 = .max, using generator: inout some RandomNumberGenerator) -> Color {
         Color(rBits: .random(in: .min ... .max, using: &generator), g: .random(in: .min ... .max, using: &generator), b: .random(in: .min ... .max, using: &generator), a: a)
     }
     public static func random(withAlpha a: Double) -> Color {
         Color(r: .random(in: 0...1), g: .random(in: 0...1), b: .random(in: 0...1), a: a)
     }
-    public static func random<G: RandomNumberGenerator>(withAlpha a: Double, using generator: inout G) -> Color {
+    public static func random(withAlpha a: Double, using generator: inout some RandomNumberGenerator) -> Color {
         Color(r: .random(in: 0...1, using: &generator), g: .random(in: 0...1, using: &generator), b: .random(in: 0...1, using: &generator), a: a)
     }
     
