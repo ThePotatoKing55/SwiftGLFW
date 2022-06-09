@@ -1,8 +1,7 @@
 import CGLFW3
 
-public enum GLFWSession {    
-    public static var hints = Hints()
-    
+@MainActor
+public enum GLFWSession {
     public struct Version: Hashable, Equatable, Comparable {
         public static func < (lhs: Version, rhs: Version) -> Bool {
             (lhs.major < rhs.major)
@@ -16,21 +15,18 @@ public enum GLFWSession {
         public let string: String
     }
     
-    public static var currentTime: Double {
+    nonisolated public static var currentTime: Double {
         glfwGetTime()
     }
     
-    public static var version: Version {
+    nonisolated public static var version: Version {
         var major: Int32 = 0, minor: Int32 = 0, revision: Int32 = 0
         glfwGetVersion(&major, &minor, &revision)
         let string = String(cString: glfwGetVersionString())
         return Version(major: major.int, minor: minor.int, revision: revision.int, string: string)
     }
     
-    @available(*, unavailable, renamed: "checkForError()")
-    public static func checkError() throws -> Void {}
-    
-    public static func checkForError() throws -> Void {
+    nonisolated public static func checkForError() throws -> Void {
         var description: UnsafePointer<CChar>?
         let lastError = glfwGetError(&description)
         if lastError != GLFW_NO_ERROR {
@@ -83,7 +79,32 @@ public enum GLFWSession {
         glfwWaitEventsTimeout(timeout)
     }
     
-    public static func timeout() {
+    nonisolated public static func timeout() {
         glfwPostEmptyEvent()
+    }
+    
+    @InitHint(.joystickHatButtons, default: false)
+    public static var mapJoystickHatsToButtons: Bool
+}
+
+@propertyWrapper
+public struct InitHint<Value: Int32Convertible> {
+    let hint: Int32
+    let defaultValue: Value
+    var definedValue: Value?
+    
+    public var wrappedValue: Value {
+        get {
+            definedValue ?? defaultValue
+        }
+        set {
+            glfwInitHint(hint, newValue.int32)
+            definedValue = newValue
+        }
+    }
+    
+    init(_ hint: Int32, default: Value) {
+        self.hint = hint
+        self.defaultValue = `default`
     }
 }

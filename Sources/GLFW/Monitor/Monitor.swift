@@ -1,7 +1,8 @@
 import CGLFW3
 
+@MainActor
 public final class GLFWMonitor: GLFWObject {
-    internal(set) public var pointer: OpaquePointer?
+    public let pointer: OpaquePointer?
     
     public var connectionHandler: (() -> Void)?
     public var disconnectionHandler: (() -> Void)?
@@ -18,7 +19,7 @@ public final class GLFWMonitor: GLFWObject {
         
         glfwSetMonitorCallback {
             let monitor = GLFWMonitor.fromOpaque($0)
-            $1.bool ? monitor.connectionHandler?() : monitor.disconnectionHandler?()
+            Bool($1) ? monitor.connectionHandler?() : monitor.disconnectionHandler?()
         }
     }
     
@@ -43,7 +44,7 @@ public final class GLFWMonitor: GLFWObject {
         var count = Int32.zero
         let pointer = glfwGetMonitors(&count)
         let array = Array(UnsafeBufferPointer(start: pointer, count: count.int))
-        return array.map(GLFWMonitor.fromOpaque(_:))
+        return array.map { GLFWMonitor.fromOpaque($0) }
     }
     
     public var name: String {
@@ -76,7 +77,7 @@ public final class GLFWMonitor: GLFWObject {
         return Frame(x: Double(x), y: Double(y), width: Double(width), height: Double(height))
     }
     
-    public struct VideoMode: Equatable, Codable, Hashable {
+    public struct VideoMode: Codable, Hashable, Sendable {
         public var redBitDepth, greenBitDepth, blueBitDepth: Int
         public var size: Size
         public var refreshRate: Int
@@ -98,7 +99,7 @@ public final class GLFWMonitor: GLFWObject {
         return videoModes.map(VideoMode.init)
     }
     
-    public struct GammaStop: Equatable, Codable, Hashable {
+    public struct GammaStop: Codable, Hashable, Sendable {
         public var red, green, blue: Int
     }
     

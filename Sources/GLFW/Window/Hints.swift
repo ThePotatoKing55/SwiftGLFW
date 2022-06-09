@@ -1,192 +1,154 @@
 import CGLFW3
 
-extension GLFWSession {
-    public struct Hints {
-        @propertyWrapper public struct BoolHint {
-            public var wrappedValue: Bool? = nil {
-                didSet {
-                    guard let value = wrappedValue else { return }
-                    glfwInitHint(hintName, value.int32)
-                }
-            }
-            
-            private let hintName: Int32
-            
-            fileprivate init(wrappedValue: Bool? = nil, _ hintName: Int32) {
-                self.wrappedValue = wrappedValue
-                self.hintName = hintName
-            }
+@propertyWrapper
+public struct WindowHint<Value: WindowHintValue> {
+    let hint: Int32
+    let defaultValue: Value
+    var definedValue: Value?
+    
+    public var wrappedValue: Value {
+        get {
+            definedValue ?? defaultValue
         }
-        
-        @BoolHint(.joystickHatButtons)
-        public var mapJoystickHatsToButtons: Bool?
-        
-        #if os(macOS)
-        @BoolHint(.cocoaChDirResources)
-        public var relativeToAppResources: Bool?
-        
-        @BoolHint(.cocoaMenuBar)
-        public var generateMenuBar: Bool?
-        #endif
+        set {
+            definedValue = newValue
+            definedValue?.setter(hint: hint)
+        }
+    }
+    
+    init(_ hint: Int32, default: Value) {
+        self.hint = hint
+        self.defaultValue = `default`
+    }
+}
+
+extension WindowHint where Value: OptionalProtocol {
+    init(_ hint: Int32) {
+        self.init(hint, default: nil)
+    }
+}
+
+@propertyWrapper
+public struct WindowHintString<Value: WindowHintStringValue> {
+    let hint: Int32
+    let defaultValue: Value
+    var definedValue: Value?
+    
+    public var wrappedValue: Value {
+        get {
+            definedValue ?? defaultValue
+        }
+        set {
+            definedValue = newValue
+            definedValue?.setter(hint: hint)
+        }
+    }
+    
+    init(_ hint: Int32, default: Value) {
+        self.hint = hint
+        self.defaultValue = `default`
+    }
+}
+
+extension WindowHintString where Value: OptionalProtocol {
+    init(_ hint: Int32) {
+        self.init(hint, default: nil)
     }
 }
 
 extension GLFWWindow {
+    @MainActor
     public struct Hints {
-        public static let `default` = Hints()
-        
         public mutating func reset() {
             glfwDefaultWindowHints()
             self = Hints()
         }
         
-        @propertyWrapper public struct BoolHint {
-            private var _value: Bool? = nil
-            
-            public var wrappedValue: Bool? {
-                get { _value }
-                set {
-                    guard let value = _value?.int32 else { return }
-                    glfwWindowHint(hintName, value)
-                }
-            }
-            
-            private let hintName: Int32
-            
-            fileprivate init(wrappedValue: Bool? = nil, _ hintName: Int32) {
-                self._value = wrappedValue
-                self.hintName = hintName
-            }
-        }
+        @WindowHint(.resizable, default: true)
+        public var resizable: Bool
         
-        @propertyWrapper public struct IntHint<Value: BinaryInteger> {
-            public var wrappedValue: Value? {
-                didSet {
-                    wrappedValue.flatMap { glfwWindowHint(hintName, $0.int32) }
-                }
-            }
-            
-            fileprivate init(wrappedValue: Value? = nil, _ hint: Int32) {
-                self.wrappedValue = wrappedValue
-                self.hintName = hint
-            }
-            
-            private let hintName: Int32
-        }
+        @WindowHint(.visible, default: true)
+        public var visible: Bool
         
-        @propertyWrapper public struct RawHint<Value: RawRepresentable> where Value.RawValue: BinaryInteger {
-            public var wrappedValue: Value? {
-                didSet {
-                    wrappedValue.flatMap { glfwWindowHint(hintName, $0.rawValue.int32) }
-                }
-            }
-            
-            fileprivate init(wrappedValue: Value? = nil, _ hint: Int32) {
-                self.wrappedValue = wrappedValue
-                self.hintName = hint
-            }
-            
-            private let hintName: Int32
-        }
+        @WindowHint(.decorated, default: true)
+        public var decorated: Bool
         
-        @propertyWrapper public struct StringHint {
-            public var wrappedValue: String? = nil {
-                didSet {
-                    guard let wrappedValue = wrappedValue else { return }
-                    glfwWindowHintString(hintName, wrappedValue)
-                }
-            }
-            
-            private let hintName: Int32
-            
-            fileprivate init(wrappedValue: String? = nil, _ hint: Int32) {
-                self.wrappedValue = wrappedValue
-                self.hintName = hint
-            }
-        }
+        @WindowHint(.focused, default: true)
+        public var focused: Bool
         
-        @BoolHint(.resizable)
-        public var isResizable: Bool?
+        @WindowHint(.autoIconify, default: true)
+        public var autoMinimizeInFullscreen: Bool
         
-        @BoolHint(.visible)
-        public var isVisible: Bool?
+        @WindowHint(.floating, default: false)
+        public var floating: Bool
         
-        @BoolHint(.decorated)
-        public var isDecorated: Bool?
+        @WindowHint(.maximized, default: false)
+        public var maximized: Bool
         
-        @BoolHint(.focused)
-        public var isInFocus: Bool?
+        @WindowHint(.centerCursor, default: false)
+        public var centerCursorOnShow: Bool
         
-        @BoolHint(.autoIconify)
-        public var minimizeOnLoseFocus: Bool?
+        @WindowHint(.transparentFramebuffer, default: false)
+        public var transparentFramebuffer: Bool
         
-        @BoolHint(.floating)
-        public var isFloating: Bool?
+        @WindowHint(.focusOnShow, default: true)
+        public var focusOnShow: Bool
         
-        @BoolHint(.maximized)
-        public var maximized: Bool?
+        @WindowHint(.scaleToMonitor, default: false)
+        public var scaleToMonitor: Bool
         
-        @BoolHint(.centerCursor)
-        public var centerCursorOnShow: Bool?
+        @WindowHint(.redBits)
+        public var redBits: Int?
         
-        @BoolHint(.transparentFramebuffer)
-        public var transparentFramebuffer: Bool?
+        @WindowHint(.greenBits)
+        public var greenBits: Int?
         
-        @BoolHint(.focusOnShow)
-        public var focusOnShow: Bool?
+        @WindowHint(.blueBits)
+        public var blueBits: Int?
         
-        @BoolHint(.scaleToMonitor)
-        public var useMonitorContentScale: Bool?
+        @WindowHint(.depthBits)
+        public var depthBits: Int?
         
-        @IntHint(.redBits)
-        public var redBitDepth: Int?
+        @WindowHint(.stencilBits)
+        public var stencilBits: Int?
         
-        @IntHint(.greenBits)
-        public var greenBitDepth: Int?
+        @WindowHint(.stereoRendering, default: true)
+        public var stereoRendering: Bool
         
-        @IntHint(.blueBits)
-        public var blueBitDepth: Int?
+        @WindowHint(.srgbCapable, default: false)
+        public var srgbFramebuffer: Bool
         
-        @IntHint(.depthBits)
-        public var depthBitDepth: Int?
+        @WindowHint(.msaaSamples)
+        public var msaaSampleCount: Int?
         
-        @IntHint(.stencilBits)
-        public var stencilBitDepth: Int?
+        @WindowHint(.monitorRefreshRate)
+        public var fullscreenRefreshRate: Int?
         
-        @BoolHint(.stereoRendering)
-        public var stereoRendering: Bool?
-        
-        @IntHint(.msaaSamples)
-        public var msaaSamples: Int?
-        
-        @BoolHint(.srgbCapable)
-        public var srgbCapable: Bool?
-        
-        @IntHint(.monitorRefreshRate)
-        public var refreshRate: Int?
-        
-        public enum ClientAPI: Int32 {
+        public enum ClientAPI: Int32, Sendable {
             case noAPI = 0
             case openGL = 0x00030001, embeddedOpenGL
         }
         
-        @RawHint(.clientAPI)
-        public var clientAPI: ClientAPI? = .openGL
+        @WindowHint(.clientAPI, default: .openGL)
+        public var clientAPI: ClientAPI
         
-        public enum ContextCreationAPI: Int32 {
+        public enum ContextCreationAPI: Int32, Sendable {
             case native = 0x00036001, egl, osMesa
         }
         
-        @RawHint(.contextCreationAPI)
-        public var contextCreationAPI: ContextCreationAPI?
+        @WindowHint(.contextCreationAPI, default: .native)
+        public var contextCreationAPI: ContextCreationAPI
         
-        public enum OpenGLCompatibility: Int32 {
-            case backwards, forward
+        public enum OpenGLCompatibility: Int32, Sendable {
+            case backward, forward
         }
         
-        public struct OpenGLVersion: Equatable {
+        @WindowHint(.openglForwardCompatibility, default: .backward)
+        public var openGLCompatibility: OpenGLCompatibility
+        
+        public struct OpenGLVersion: Equatable, Sendable {
             public let major, minor: Int
-            internal init(major: Int, minor: Int) {
+            init(major: Int, minor: Int) {
                 (self.major, self.minor) = (major, minor)
             }
             
@@ -214,64 +176,64 @@ extension GLFWWindow {
             public static let v4_6 = OpenGLVersion(major: 4, minor: 6)
         }
         
-        @IntHint(.contextVersionMajor)
-        private var openglMajor: Int?
-        @IntHint(.contextVersionMinor)
-        private var openglMinor: Int?
+        @WindowHint(.contextVersionMajor, default: 1)
+        private var openGLMajor: Int
+        @WindowHint(.contextVersionMinor, default: 0)
+        private var openGLMinor: Int
         
-        public var openglVersion: OpenGLVersion? {
-            didSet {
-                openglMajor = openglVersion?.major
-                openglMinor = openglVersion?.minor
+        public var openGLVersion: OpenGLVersion {
+            get {
+                OpenGLVersion(major: openGLMajor, minor: openGLMinor)
+            }
+            set {
+                openGLMajor = newValue.major
+                openGLMinor = newValue.minor
             }
         }
         
-        @RawHint(.openglForwardCompatibility)
-        public var openglCompatibility: OpenGLCompatibility?
+        @WindowHint(.openglDebugContext, default: false)
+        public var openGLDebugMode: Bool
         
-        public enum OpenGLProfile: Int32 {
+        public enum OpenGLProfile: Int32, Sendable {
             case any = 0, core = 0x00032001, compatibility
         }
         
-        @BoolHint(.openglDebugContext)
-        public var openglDebugMode: Bool?
+        @WindowHint(.openglProfile, default: .any)
+        public var openGLProfile: OpenGLProfile
         
-        @RawHint(.openglProfile)
-        public var openglProfile: OpenGLProfile?
-        
-        public enum Robustness: Int32 {
-            case noResetNotification = 0x00031001, loseContext
+        public enum Robustness: Int32, Sendable {
+            case any = 0, noResetNotification = 0x00031001, loseContext
         }
         
-        @RawHint(.contextRobustness)
-        public var robustness: Robustness?
+        @WindowHint(.contextRobustness, default: .any)
+        public var robustness: Robustness
         
-        public enum ReleaseBehavior: Int32 {
+        public enum ReleaseBehavior: Int32, Sendable {
             case any = 0, flushPipeline = 0x00035001, none
         }
         
-        @RawHint(.contextReleaseBehavior)
-        public var releaseBehavior: ReleaseBehavior?
+        @WindowHint(.contextReleaseBehavior, default: .any)
+        public var releaseBehavior: ReleaseBehavior
         
-        @BoolHint(.contextSuppressErrors)
-        public var suppressErrors: Bool?
+        @WindowHint(.contextSuppressErrors, default: false)
+        public var suppressErrors: Bool
         
         #if os(macOS)
-        @BoolHint(.cocoaRetinaFramebuffer)
-        public var retinaFramebuffer: Bool?
+        @WindowHint(.cocoaRetinaFramebuffer, default: true)
+        public var retinaFramebuffer: Bool
         
-        @StringHint(.cocoaFrameName)
+        @WindowHintString(.cocoaFrameName)
         public var frameName: String?
         
-        @BoolHint(.cocoaGraphicsSwitching)
-        public var autoGraphicsSwitching: Bool?
+        @WindowHint(.cocoaGraphicsSwitching, default: true)
+        public var autoGraphicsSwitching: Bool
         #endif
         
         #if os(Linux)
-        @StringHint(.x11ClassName)
+        @WindowHintString(.x11ClassName)
         public var x11ClassName: String?
         
-        @StringHint(.x11InstanceName)
+        @WindowHintString(.x11InstanceName)
         public var x11InstanceName: String?
         #endif
     }

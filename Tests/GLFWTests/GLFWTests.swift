@@ -1,10 +1,11 @@
 import XCTest
 @testable import GLFW
 
+@MainActor
 class GLFWTests: XCTestCase {
     var window: GLFWWindow!
     
-    override class func setUp() {
+    @MainActor override class func setUp() {
         XCTAssertNoThrow(try GLFWSession.initialize())
     }
     
@@ -13,9 +14,9 @@ class GLFWTests: XCTestCase {
     }
     
     func testWindowCreation() {
-        GLFWWindow.hints.openglVersion = .v4_1
-        GLFWWindow.hints.openglProfile = .core
-        GLFWWindow.hints.openglCompatibility = .forward
+        GLFWWindow.hints.openGLVersion = .v4_1
+        GLFWWindow.hints.openGLProfile = .core
+        GLFWWindow.hints.openGLCompatibility = .forward
         
         window = try? GLFWWindow(width: 400, height: 300)
         XCTAssertNotNil(window)
@@ -24,11 +25,23 @@ class GLFWTests: XCTestCase {
         XCTAssertNotNil(window.nsWindow)
         XCTAssertNotNil(window.context.nsOpenGLContext)
         
-        #if GLFW_METAL_LAYER_SUPPORT
+        print(window.context.openGLVersion)
+        
+#if GLFW_METAL_LAYER_SUPPORT
         XCTAssertNotNil(window.metalLayer)
-        #else
-        print("GLFW_METAL_LAYER_SUPPORT not defined; skipping metal layer test")
-        #endif
+#endif
+        
+        Task {
+            let size = 1024
+            let image = Image(width: size, height: size) { x, y in
+                Color(h: Double(y)/Double(size), s: 1, v: 1)
+            }
+            
+            await MainActor.run {
+                window.setIcon(image)
+                print("set app icon")
+            }
+        }
         
         while !window.shouldClose {
             GLFWSession.pollInputEvents()
@@ -36,7 +49,7 @@ class GLFWTests: XCTestCase {
         }
     }
     
-    override class func tearDown() {
+    @MainActor override class func tearDown() {
         GLFWSession.terminate()
     }
 }

@@ -1,4 +1,4 @@
-public struct ContentScale: Hashable, Codable {
+public struct ContentScale: Hashable, Codable, Sendable {
     public var x: Double
     public var y: Double
     

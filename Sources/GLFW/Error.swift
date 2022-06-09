@@ -1,10 +1,10 @@
 import CGLFW3
 
-public struct GLFWError: Error {
+public struct GLFWError: Error, Sendable {
     public let kind: ErrorKind
     public let description: String?
     
-    public enum ErrorKind: Int32, Error, Equatable {
+    public enum ErrorKind: Int32, Error, Equatable, Sendable {
         case none = 0
         case notInitialized = 0x00010001
         case noCurrentContext = 0x00010002
