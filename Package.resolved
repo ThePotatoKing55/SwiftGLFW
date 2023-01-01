@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "cglfw3",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/thepotatoking55/CGLFW3.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "b179e80e660eb260d5ee533d1153d471982ce448"
+      }
+    }
+  ],
+  "version" : 2
+}
