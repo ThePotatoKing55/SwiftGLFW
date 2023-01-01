@@ -1,3 +1,5 @@
+import CGLFW3
+
 #if os(Windows)
 extension GLFWWindow {
     public func setIcon(_ icon: Image) {
