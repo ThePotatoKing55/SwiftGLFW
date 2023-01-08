@@ -1,11 +1,10 @@
 # SwiftGLFW
 
-A Swift library that adds a more Swift-like interface to [GLFW](https://github.com/glfw/glfw). So far, it's only been tested on macOS, but it should compile and run on Windows and Linux with little difficulty.
+A Swift library that adds a more Swift-like interface to [GLFW](https://github.com/glfw/glfw). ~~So far, it's only been tested on macOS, but it should compile and run on Windows and Linux with little difficulty~~. As of pull request #5, cross-platform *should* be working now.
 
 This package is based on [CGLFW3](https://github.com/thepotatoking55/CGLFW3), which is just the pure C bindings.
 
 ## Setting Up
-
 
 Adding this to your project is pretty standard for a Swift Package.
 
@@ -18,7 +17,7 @@ let package = Package(
         .executable(name: "GLFW Sample", targets: ["GLFWSample"])
     ],
     dependencies: [
-        .package(url: "https://github.com/thepotatoking55/SwiftGLFW.git", .upToNextMajor(from: "4.1.0"))
+        .package(url: "https://github.com/thepotatoking55/SwiftGLFW.git", .upToNextMajor(from: "4.2.0"))
     ],
     targets: [
         .executableTarget(
@@ -32,6 +31,10 @@ let package = Package(
 ```
 
 ## Usage
+### Documentation
+
+There's a [work in progress adaptation of GLFW's C documentation on this repo](https://github.com/thepotatoking55/swiftglfw/wiki), which should help show the differences (or serve as an introduction if you're new to GLFW). In-code documentation is also being worked on.
+
 ### Example Code
 
 GLFW's [Hello Window example](https://www.glfw.org/documentation.html#example-code), except in a much more Swift-idiomatic way:
@@ -45,7 +48,7 @@ func main() {
         try GLFWSession.initialize()
         
         /* macOS's OpenGL implementation requires some extra tweaking */
-        GLFWWindow.hints.openglVersion = .v4_1
+        GLFWWindow.hints.contextVersion = (4, 1)
         GLFWWindow.hints.openglProfile = .core
         GLFWWindow.hints.openglCompatibility = .forward
         
@@ -101,7 +104,7 @@ import GLFW
 
 try! GLFWSession.initialize()
 
-guard let window = try? Window(width: 640, height: 480, title: "Hello World") else {
+guard let window = try? GLFWWindow(width: 640, height: 480, title: "Hello World") else {
     GLFWSession.terminate()
     return
 }
@@ -111,7 +114,7 @@ window.maximize()
 
 window.mouse.useRawMotionInput = true
 window.mouse.cursorMode = .disabled
-window.scrollInputHandler = { offset in
+window.scrollInputHandler = { window, x, y in
     ...
 }
 
