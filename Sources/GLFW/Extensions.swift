@@ -1,11 +1,5 @@
 import CGLFW3
 
-extension GLFWContext.Hints.OpenGLVersion: CustomStringConvertible {
-    public var description: String {
-        return "\(major).\(minor)"
-    }
-}
-
 public protocol WindowHintValue {
     func setter(hint: Int32)
 }

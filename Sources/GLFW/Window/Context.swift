@@ -39,8 +39,8 @@ public final class GLFWContext: GLFWObject {
     @ContextAttribute(.contextVersionMinor)
     private var contextMinor: Int
     
-    public var openGLVersion: Hints.OpenGLVersion {
-        .init(major: contextMajor, minor: contextMinor)
+    public var version: (major: Int, minor: Int) {
+        return (major: contextMajor, minor: contextMinor)
     }
     
     @ContextAttribute(.openglForwardCompatibility)

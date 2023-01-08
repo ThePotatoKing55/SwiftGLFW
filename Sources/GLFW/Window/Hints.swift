@@ -145,57 +145,26 @@ extension GLFWWindow {
         @WindowHint(.contextCreationAPI, default: .native)
         public var contextCreationAPI: ContextCreationAPI
         
+        @WindowHint(.contextVersionMinor, default: 0)
+        private var contextVersionMinor
+        
+        @WindowHint(.contextVersionMajor, default: 1)
+        private var contextVersionMajor
+        
+        public var contextVersion: (major: Int, minor: Int) {
+            get { return (contextVersionMajor, contextVersionMinor) }
+            set { (contextVersionMajor, contextVersionMinor) = newValue }
+        }
+        
+        @available(*, unavailable, renamed: "contextVersion")
+        public var openGLVersion: (Int, Int) = (0,0)
+        
         public enum OpenGLCompatibility: Int32, Sendable {
             case backward, forward
         }
         
         @WindowHint(.openglForwardCompatibility, default: .backward)
         public var openGLCompatibility: OpenGLCompatibility
-        
-        public struct OpenGLVersion: Equatable, Sendable {
-            public let major, minor: Int
-            init(major: Int, minor: Int) {
-                (self.major, self.minor) = (major, minor)
-            }
-            
-            public static let v1_0 = OpenGLVersion(major: 1, minor: 0)
-            public static let v1_1 = OpenGLVersion(major: 1, minor: 1)
-            public static let v1_2 = OpenGLVersion(major: 1, minor: 2)
-            public static let v1_3 = OpenGLVersion(major: 1, minor: 3)
-            public static let v1_4 = OpenGLVersion(major: 1, minor: 4)
-            public static let v1_5 = OpenGLVersion(major: 1, minor: 5)
-            
-            public static let v2_0 = OpenGLVersion(major: 2, minor: 0)
-            public static let v2_1 = OpenGLVersion(major: 2, minor: 1)
-            
-            public static let v3_0 = OpenGLVersion(major: 3, minor: 0)
-            public static let v3_1 = OpenGLVersion(major: 3, minor: 1)
-            public static let v3_2 = OpenGLVersion(major: 3, minor: 2)
-            public static let v3_3 = OpenGLVersion(major: 3, minor: 3)
-            
-            public static let v4_0 = OpenGLVersion(major: 4, minor: 0)
-            public static let v4_1 = OpenGLVersion(major: 4, minor: 1)
-            public static let v4_2 = OpenGLVersion(major: 4, minor: 2)
-            public static let v4_3 = OpenGLVersion(major: 4, minor: 3)
-            public static let v4_4 = OpenGLVersion(major: 4, minor: 4)
-            public static let v4_5 = OpenGLVersion(major: 4, minor: 5)
-            public static let v4_6 = OpenGLVersion(major: 4, minor: 6)
-        }
-        
-        @WindowHint(.contextVersionMajor, default: 1)
-        private var openGLMajor: Int
-        @WindowHint(.contextVersionMinor, default: 0)
-        private var openGLMinor: Int
-        
-        public var openGLVersion: OpenGLVersion {
-            get {
-                OpenGLVersion(major: openGLMajor, minor: openGLMinor)
-            }
-            set {
-                openGLMajor = newValue.major
-                openGLMinor = newValue.minor
-            }
-        }
         
         @WindowHint(.openglDebugContext, default: false)
         public var openGLDebugMode: Bool

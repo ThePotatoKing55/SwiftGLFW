@@ -14,7 +14,7 @@ class GLFWTests: XCTestCase {
     }
     
     func testWindowCreation() {
-        GLFWWindow.hints.openGLVersion = .v4_1
+        GLFWWindow.hints.contextVersion = (4, 1)
         GLFWWindow.hints.openGLProfile = .core
         GLFWWindow.hints.openGLCompatibility = .forward
         
@@ -25,7 +25,7 @@ class GLFWTests: XCTestCase {
         XCTAssertNotNil(window.nsWindow)
         XCTAssertNotNil(window.context.nsOpenGLContext)
         
-        print(window.context.openGLVersion)
+        print(window.context.version)
         
 #if GLFW_METAL_LAYER_SUPPORT
         XCTAssertNotNil(window.metalLayer)
