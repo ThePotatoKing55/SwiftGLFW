@@ -115,7 +115,7 @@ extension GLFWWindow {
         @WindowHint(.stencilBits)
         public var stencilBits: Int?
         
-        @WindowHint(.stereoRendering, default: true)
+        @WindowHint(.stereoRendering, default: false)
         public var stereoRendering: Bool
         
         @WindowHint(.srgbCapable, default: false)
