@@ -6,30 +6,27 @@ public final class GLFWWindow: GLFWObject {
     
     public static var hints = Hints()
     
-    public var positionChangeHandler: ((Point) -> Void)?
-    public var sizeChangeHandler: ((Size) -> Void)?
+    public var positionChangeHandler: ((GLFWWindow, Int, Int) -> Void)?
+    public var sizeChangeHandler: ((GLFWWindow, Int, Int) -> Void)?
     
-    @available(*, unavailable, message: "Replaced with positionChangeHandler and sizeChangeHandler")
-    public var frameChangeHandler: ((Frame) -> Void)?
+    public var shouldCloseHandler: ((GLFWWindow) -> Void)?
+    public var refreshHandler: ((GLFWWindow) -> Void)?
+    public var receiveFocusHandler: ((GLFWWindow) -> Void)?
+    public var loseFocusHandler: ((GLFWWindow) -> Void)?
+    public var minimizeHandler: ((GLFWWindow) -> Void)?
+    public var maximizeHandler: ((GLFWWindow) -> Void)?
+    public var restoreHandler: ((GLFWWindow) -> Void)?
+    public var framebufferSizeChangeHandler: ((GLFWWindow, Int, Int) -> Void)?
+    public var contentScaleChangeHandler: ((GLFWWindow, Double, Double) -> Void)?
+    public var keyInputHandler: ((GLFWWindow, Keyboard.Key, Int, ButtonState, Keyboard.Modifier) -> Void)?
+    public var textInputHandler: ((GLFWWindow, String) -> Void)?
     
-    public var shouldCloseHandler: (() -> Bool)?
-    public var refreshHandler: (() -> Void)?
-    public var receiveFocusHandler: (() -> Void)?
-    public var loseFocusHandler: (() -> Void)?
-    public var minimizeHandler: (() -> Void)?
-    public var maximizeHandler: (() -> Void)?
-    public var restoreHandler: (() -> Void)?
-    public var framebufferSizeChangeHandler: ((Size) -> Void)?
-    public var contentScaleChangeHandler: ((ContentScale) -> Void)?
-    public var keyInputHandler: ((Keyboard.Key, Int, ButtonState, Keyboard.Modifier) -> Void)?
-    public var textInputHandler: ((String) -> Void)?
+    public var cursorEnterHandler: ((GLFWWindow) -> Void)?
+    public var cursorExitHandler: ((GLFWWindow) -> Void)?
+    public var mouseButtonHandler: ((GLFWWindow, Mouse.Button, ButtonState, Keyboard.Modifier) -> Void)?
+    public var scrollInputHandler: ((GLFWWindow, Double, Double) -> Void)?
     
-    public var cursorEnterHandler: (() -> Void)?
-    public var cursorExitHandler: (() -> Void)?
-    public var mouseButtonHandler: ((Mouse.Button, ButtonState, Keyboard.Modifier) -> Void)?
-    public var scrollInputHandler: ((Point) -> Void)?
-    
-    public var dragAndDropHandler: (([String]) -> Void)?
+    public var dragAndDropHandler: ((GLFWWindow, [String]) -> Void)?
     
     @WindowAttribute(.iconified)
     public private(set) var minimized: Bool
@@ -211,66 +208,66 @@ public final class GLFWWindow: GLFWObject {
         
         glfwSetWindowPosCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            window.positionChangeHandler?(Point($1.int, $2.int))
+            window.positionChangeHandler?(window, $1.int, $2.int)
         }
         glfwSetWindowSizeCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            window.sizeChangeHandler?(Size($1.int, $2.int))
+            window.sizeChangeHandler?(window, $1.int, $2.int)
         }
         glfwSetWindowCloseCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            if window.shouldCloseHandler?() == false { window.setShouldClose(to: false) }
+            window.shouldCloseHandler?(window)
         }
         glfwSetWindowRefreshCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            window.refreshHandler?()
+            window.refreshHandler?(window)
         }
         glfwSetWindowFocusCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            Bool($1) ? window.receiveFocusHandler?() : window.loseFocusHandler?()
+            Bool($1) ? window.receiveFocusHandler?(window) : window.loseFocusHandler?(window)
         }
         glfwSetWindowIconifyCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            Bool($1) ? window.minimizeHandler?() : window.restoreHandler?()
+            Bool($1) ? window.minimizeHandler?(window) : window.restoreHandler?(window)
         }
         glfwSetWindowMaximizeCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            Bool($1) ? window.maximizeHandler?() : window.restoreHandler?()
+            Bool($1) ? window.maximizeHandler?(window) : window.restoreHandler?(window)
         }
         glfwSetFramebufferSizeCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            window.framebufferSizeChangeHandler?(Size(width: Int($1), height: Int($2)))
+            window.framebufferSizeChangeHandler?(window, $1.int, $2.int)
         }
         glfwSetWindowContentScaleCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            window.contentScaleChangeHandler?(ContentScale(x: Double($1), y: Double($2)))
+            window.contentScaleChangeHandler?(window, Double($1), Double($2))
         }
         glfwSetKeyCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            window.keyInputHandler?(Keyboard.Key($1), $2.int, ButtonState($3), Keyboard.Modifier(rawValue: $4))
+            window.keyInputHandler?(window, Keyboard.Key($1), $2.int, ButtonState($3), Keyboard.Modifier(rawValue: $4))
         }
         glfwSetCharCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
             guard let scalar = UnicodeScalar($1) else { return }
-            window.textInputHandler?(String(scalar))
+            window.textInputHandler?(window, String(scalar))
         }
         glfwSetCursorEnterCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            Bool($1) ? window.cursorEnterHandler?() : window.cursorExitHandler?()
+            Bool($1) ? window.cursorEnterHandler?(window) : window.cursorExitHandler?(window)
         }
         glfwSetMouseButtonCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            window.mouseButtonHandler?(Mouse.Button(rawValue: $1) ?? .left, ButtonState($2), Keyboard.Modifier(rawValue: $3))
+            window.mouseButtonHandler?(window, Mouse.Button(rawValue: $1) ?? .left, ButtonState($2), Keyboard.Modifier(rawValue: $3))
         }
         glfwSetScrollCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
-            window.scrollInputHandler?(Point(x: $1, y: $2))
+            window.scrollInputHandler?(window, $1, $2)
         }
         glfwSetDropCallback(pointer) {
             let window = GLFWWindow.fromOpaque($0)
             let cStringArray = Array(UnsafeBufferPointer(start: $2, count: $1.int))
             let array = cStringArray.compactMap({$0}).map(String.init(cString:))
-            window.dragAndDropHandler?(array)
+            window.dragAndDropHandler?(window, array)
         }
     }
     
