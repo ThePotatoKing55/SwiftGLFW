@@ -18,7 +18,7 @@ class GLFWTests: XCTestCase {
         GLFWWindow.hints.openGLProfile = .core
         GLFWWindow.hints.openGLCompatibility = .forward
         
-        window = try? GLFWWindow(width: 400, height: 300)
+        window = try? GLFWWindow(width: 400, height: 300, title: "")
         XCTAssertNotNil(window)
         
         window.context.makeCurrent()

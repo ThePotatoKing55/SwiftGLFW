@@ -273,7 +273,7 @@ public final class GLFWWindow: GLFWObject {
         glfwDestroyCursor(cursorPtr)
     }
     
-    public convenience init(width: Int, height: Int, title: String = "Window", monitor: GLFWMonitor? = nil, sharedContext context: GLFWContext? = nil) throws {
+    public convenience init(width: Int, height: Int, title: String, monitor: GLFWMonitor? = nil, sharedContext context: GLFWContext? = nil) throws {
         let pointer = glfwCreateWindow(width.int32, height.int32, title, monitor?.pointer, context?.pointer)
         try GLFWSession.checkForError()
         self.init(pointer)
