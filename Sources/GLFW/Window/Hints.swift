@@ -106,6 +106,9 @@ extension GLFWWindow {
         @WindowHint(.blueBits)
         public var blueBits: Int?
         
+        @WindowHint(.alphaBits)
+        public var alphaBits: Int?
+        
         @WindowHint(.depthBits)
         public var depthBits: Int?
         
