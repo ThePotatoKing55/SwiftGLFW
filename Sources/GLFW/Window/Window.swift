@@ -55,6 +55,10 @@ public final class GLFWWindow: GLFWObject {
         glfwHideWindow(pointer)
     }
     
+    public func show() {
+        glfwShowWindow(pointer)
+    }
+    
     public func restore() {
         glfwRestoreWindow(pointer)
     }
