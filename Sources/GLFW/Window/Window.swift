@@ -81,15 +81,12 @@ public final class GLFWWindow: GLFWObject {
     }
     
     nonisolated public var shouldClose: Bool {
-        Bool(glfwWindowShouldClose(pointer))
-    }
-    
-    nonisolated private func setShouldClose(to shouldClose: Bool) {
-        glfwSetWindowShouldClose(pointer, shouldClose.int32)
+        get { Bool(glfwWindowShouldClose(pointer)) }
+        set { glfwSetWindowShouldClose(pointer, newValue.int32) }
     }
     
     nonisolated public func close() {
-        setShouldClose(to: true)
+        shouldClose = true
     }
     
     public func setTitle(_ title: String) {
@@ -156,6 +153,12 @@ public final class GLFWWindow: GLFWObject {
         set {
             glfwSetWindowSize(pointer, Int32(newValue.width), Int32(newValue.height))
         }
+    }
+    
+    public var margins: Margins {
+        var left = Int32.zero, right = Int32.zero, top = Int32.zero, bottom = Int32.zero
+        glfwGetWindowFrameSize(pointer, &left, &top, &right, &bottom)
+        return Margins(left: Int(left), right: Int(right), top: Int(top), bottom: Int(bottom))
     }
     
     public func setSizeLimits(minWidth: Int?, minHeight: Int?, maxWidth: Int?, maxHeight: Int?) {
