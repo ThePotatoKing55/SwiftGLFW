@@ -118,11 +118,14 @@ extension GLFWWindow {
         @WindowHint(.stereoRendering, default: false)
         public var stereoRendering: Bool
         
+        @WindowHint(.msaaSamples)
+        public var msaaSampleCount: Int?
+        
         @WindowHint(.srgbCapable, default: false)
         public var srgbFramebuffer: Bool
         
-        @WindowHint(.msaaSamples)
-        public var msaaSampleCount: Int?
+        @WindowHint(.doubleBuffer, default: true)
+        public var doubleBuffer: Bool
         
         @WindowHint(.monitorRefreshRate)
         public var fullscreenRefreshRate: Int?
