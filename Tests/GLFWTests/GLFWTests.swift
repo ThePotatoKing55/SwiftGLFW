@@ -44,7 +44,7 @@ class GLFWTests: XCTestCase {
         }
         
         while !window.shouldClose {
-            GLFWSession.pollInputEvents()
+            GLFWSession.pollEvents()
             window.swapBuffers()
         }
     }

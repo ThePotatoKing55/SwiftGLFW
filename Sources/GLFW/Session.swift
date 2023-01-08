@@ -62,7 +62,7 @@ public enum GLFWSession {
         set { glfwSetClipboardString(nil, newValue) }
     }
     
-    public static func pollInputEvents() {
+    public static func pollEvents() {
         glfwPollEvents()
         for index in 0 ..< 16 {
             if glfwGetGamepadState(index.int32 + .gamepad1, &Gamepad.states[index]) == .false {
@@ -70,6 +70,9 @@ public enum GLFWSession {
             }
         }
     }
+    
+    @available(*, renamed: "pollEvents()")
+    public static func pollInputEvents() { pollEvents() }
     
     public static func waitEvents() {
         glfwWaitEvents()
