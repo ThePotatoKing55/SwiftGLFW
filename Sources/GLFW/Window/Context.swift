@@ -16,6 +16,11 @@ public final class GLFWContext: GLFWObject {
         glfwMakeContextCurrent(pointer)
     }
     
+    public func setSwapInterval(_ interval: Int) {
+        glfwSwapInterval(Int32(interval))
+    }
+    
+    @available(*, renamed: "setSwapInterval")
     public func setVsync(_ enabled: Bool) {
         glfwSwapInterval(enabled ? 1 : 0)
     }
