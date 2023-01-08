@@ -132,7 +132,7 @@ extension GLFWWindow {
         
         public enum ClientAPI: Int32, Sendable {
             case noAPI = 0
-            case openGL = 0x00030001, embeddedOpenGL
+            case openGL = 0x00030001, openGLES
         }
         
         @WindowHint(.clientAPI, default: .openGL)
