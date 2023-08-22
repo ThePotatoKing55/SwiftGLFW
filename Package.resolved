@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "CGLFW3",
+        "repositoryURL": "https://github.com/thepotatoking55/CGLFW3.git",
+        "state": {
+          "branch": "main",
+          "revision": "b179e80e660eb260d5ee533d1153d471982ce448",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}

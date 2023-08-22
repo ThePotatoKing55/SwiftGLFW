@@ -156,9 +156,6 @@ extension GLFWWindow {
             set { (contextVersionMajor, contextVersionMinor) = newValue }
         }
         
-        @available(*, unavailable, renamed: "contextVersion")
-        public var openGLVersion: (Int, Int) = (0,0)
-        
         public enum OpenGLCompatibility: Int32, Sendable {
             case backward, forward
         }
