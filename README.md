@@ -18,12 +18,21 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/thepotatoking55/SwiftGLFW.git", .upToNextMajor(from: "4.2.0"))
+        ...
     ],
     targets: [
         .executableTarget(
             name: "GLFWSample",
+            // Silence deprecation warnings on Apple platforms if you're using OpenGL
+            cSettings: [
+                .define("GL_SILENCE_DEPRECATION",
+                    .when(platforms: [.macOS])),
+                .define("GLES_SILENCE_DEPRECATION",
+                    .when(platforms: [.iOS, .tvOS])),
+            ],
             dependencies: [
-                .product(name: "GLFW", package: "SwiftGLFW")
+                .product(name: "SwiftGLFW", package: "SwiftGLFW"),
+                ...
             ]
         )
     ]
@@ -43,14 +52,15 @@ GLFW's [Hello Window example](https://www.glfw.org/documentation.html#example-co
 import GLFW
 import OpenGL // Or whatever other library you use
 
+@MainActor
 func main() {
     do {
         try GLFWSession.initialize()
         
         /* macOS's OpenGL implementation requires some extra tweaking */
         GLFWWindow.hints.contextVersion = (4, 1)
-        GLFWWindow.hints.openglProfile = .core
-        GLFWWindow.hints.openglCompatibility = .forward
+        GLFWWindow.hints.openGLProfile = .core
+        GLFWWindow.hints.openGLCompatibility = .forward
         
         /* Create a windowed mode window and its OpenGL context */
         let window = try GLFWWindow(width: 640, height: 480, title: "Hello World")
@@ -61,7 +71,7 @@ func main() {
         /* Loop until the user closes the window */
         while !window.shouldClose {
             /* Render here */
-            glClear(GL_COLOR_BUFFER_BIT)
+            glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
             someRenderFunctionDefinedElsewhere()
             
             /* Swap front and back buffers */
@@ -72,7 +82,6 @@ func main() {
         }
     } catch let error as GLFWError {
         print(error.description ?? "Unknown error")
-        print(error.underlyingError.description)
     } catch {
         print(error)
     }
@@ -90,14 +99,14 @@ try GLFWSession.checkForError()
 Or, you can assign an error handler to catch them as soon as they come up:
 
 ```swift
-GLFWSession.errorHandler = { error in
+GLFWSession.onReceiveError = { error in
     /* do something with it here */
 }
 ```
 
 ### Wrapping things up
 
-Like Swift, this package is built with readability and strong type-checking in mind. Rather than passing ints and opaque pointers around, variables are represented with enums and so on.
+Like Swift, this package is built with readability and strong type-checking in mind. Rather than passing `Int32`s and `OpaquePointer`s around, variables are represented with enums and so on.
     
 ```swift
 import GLFW
