@@ -1,16 +1,15 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "CGLFW3",
-        "repositoryURL": "https://github.com/thepotatoking55/CGLFW3.git",
-        "state": {
-          "branch": "main",
-          "revision": "b179e80e660eb260d5ee533d1153d471982ce448",
-          "version": null
-        }
+  "originHash" : "fdf7ecb6c20f2e25374ed7e0d9e523ebb6c08cbc01b53eb73a6ed1fe4d0f42bf",
+  "pins" : [
+    {
+      "identity" : "cglfw3",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/thepotatoking55/CGLFW3.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "91e7f0dabc03ab14f433bfa5de8c5a77e295958a"
       }
-    ]
-  },
-  "version": 1
+    }
+  ],
+  "version" : 3
 }

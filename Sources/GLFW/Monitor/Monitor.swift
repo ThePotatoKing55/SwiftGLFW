@@ -125,11 +125,11 @@ public final class GLFWMonitor: GLFWObject {
         }
         set {
             let red = UnsafeMutablePointer<CUnsignedShort>.allocate(capacity: newValue.stops.count)
-            red.assign(from: newValue.red, count: newValue.stops.count)
+            red.update(from: newValue.red, count: newValue.stops.count)
             let green = UnsafeMutablePointer<CUnsignedShort>.allocate(capacity: newValue.stops.count)
-            green.assign(from: newValue.green, count: newValue.stops.count)
+            green.update(from: newValue.green, count: newValue.stops.count)
             let blue = UnsafeMutablePointer<CUnsignedShort>.allocate(capacity: newValue.stops.count)
-            blue.assign(from: newValue.blue, count: newValue.stops.count)
+            blue.update(from: newValue.blue, count: newValue.stops.count)
             var ramp = GLFWgammaramp(red: red, green: green, blue: blue, size: newValue.size)
             glfwSetGammaRamp(pointer, &ramp)
             red.deallocate()

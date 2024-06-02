@@ -1,7 +1,6 @@
 import XCTest
 @testable import GLFW
 
-@MainActor
 class GLFWTests: XCTestCase {
     var window: GLFWWindow!
     
@@ -9,11 +8,11 @@ class GLFWTests: XCTestCase {
         XCTAssertNoThrow(try GLFWSession.initialize())
     }
     
-    func testMonitorCocoaBindings() {
+    @MainActor func testMonitorCocoaBindings() {
         XCTAssertEqual(CGMainDisplayID(), GLFWMonitor.primary.directDisplayID)
     }
     
-    func testWindowCreation() {
+    @MainActor func testWindowCreation() {
         GLFWWindow.hints.contextVersion = (4, 1)
         GLFWWindow.hints.openGLProfile = .core
         GLFWWindow.hints.openGLCompatibility = .forward

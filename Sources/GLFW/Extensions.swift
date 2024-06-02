@@ -1,14 +1,14 @@
 import CGLFW3
 
-public protocol WindowHintValue {
+public protocol GLFWWindowHintValue {
     func setter(hint: Int32)
 }
 
-public protocol WindowHintStringValue {
+public protocol GLFWWindowHintStringValue {
     func setter(hint: Int32)
 }
 
-public protocol Int32Convertible: WindowHintValue {
+public protocol Int32Convertible: GLFWWindowHintValue {
     init(_ int32: Int32)
     var int32: Int32 { get }
 }
@@ -19,19 +19,19 @@ extension Int32Convertible {
     }
 }
 
-extension String: WindowHintStringValue {
+extension String: GLFWWindowHintStringValue {
     public func setter(hint: Int32) {
         glfwWindowHintString(hint, self)
     }
 }
 
-extension Optional: WindowHintValue where Wrapped: Int32Convertible {
+extension Optional: GLFWWindowHintValue where Wrapped: Int32Convertible {
     public func setter(hint: Int32) {
         glfwWindowHint(hint, self?.int32 ?? .dontCare)
     }
 }
 
-extension Optional: WindowHintStringValue where Wrapped == String {
+extension Optional: GLFWWindowHintStringValue where Wrapped == String {
     public func setter(hint: Int32) {
         glfwWindowHintString(hint, self)
     }

@@ -1,7 +1,7 @@
 import CGLFW3
 
 @propertyWrapper
-public struct WindowHint<Value: WindowHintValue> {
+public struct WindowHint<Value: GLFWWindowHintValue> {
     let hint: Int32
     let defaultValue: Value
     var definedValue: Value?
@@ -29,7 +29,7 @@ extension WindowHint where Value: OptionalProtocol {
 }
 
 @propertyWrapper
-public struct WindowHintString<Value: WindowHintStringValue> {
+public struct WindowHintString<Value: GLFWWindowHintStringValue> {
     let hint: Int32
     let defaultValue: Value
     var definedValue: Value?

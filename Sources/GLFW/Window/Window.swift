@@ -86,8 +86,9 @@ public final class GLFWWindow: GLFWObject {
         shouldClose = true
     }
     
-    public func setTitle(_ title: String) {
-        glfwSetWindowTitle(pointer, title)
+    public var title: String? {
+        get { glfwGetWindowTitle(pointer).map(String.init(cString:)) }
+        set { glfwSetWindowTitle(pointer, newValue) }
     }
     
     @WindowAttribute(.resizable)
